@@ -1,6 +1,8 @@
 * ensorbi
 ensorbi is a mechanism to absorb your experience.
 
+[[./doc/ensorbi-demo-4.gif][Demo]]
+
 ** last check environment
 windows10
 deno: 1.8.3
@@ -9,7 +11,6 @@ deno: 1.8.3
 
 1. [[https://deno.land/manual/getting_started/installation][install of Deno]]
 2. git clone of this repository
-
 
 
 ** usage
