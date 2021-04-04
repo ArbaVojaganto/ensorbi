@@ -1,7 +1,7 @@
 * ensorbi
 ensorbi is a mechanism to absorb your experience.
 
-[[./doc/ensorbi-demo-4.gif][Demo]]
+[[./doc/ensorbi-demo-4.gif]]
 
 ** last check environment
 windows10
