@@ -554,6 +554,7 @@ export class StoredNodes {
     return nodes
   }
 
+
   /**
    * 登録時に値の追加、更新が入った場合、PUTリクエストを送る
    * @param e 
@@ -563,6 +564,16 @@ export class StoredNodes {
     this.onRegister()
   }
 
+  /**
+   * どこからリソースを取得するか、後から設定できるように
+   * @param method 
+   */
+  setRemoteGetMethod = (
+    method: (hash: string, force?: boolean) => Promise<Node[]>
+    ) => {
+    this.remoteGet = method
+  }
+
   private remoteGet = async(
     hash: string,
     force = false,
@@ -570,7 +581,6 @@ export class StoredNodes {
     const pathStruct = metaResourcePath(hash)
     const path = pathStruct.prefix + pathStruct.hashDir + pathStruct.hash + pathStruct.extention
     const response = await GetRequest(path);
-    //const response = await GetRequest( "/posts/" + hash )
     if (isNull(response)) return []
     const json = await response.json();
     console.log(json);

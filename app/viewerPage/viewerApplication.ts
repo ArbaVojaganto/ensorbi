@@ -10,12 +10,52 @@ import {
 import {
   CanvasManager,
 } from "./../editorPage/CanvasManager.ts"
+import {
+  GetRequest,
+} from "./../client/util.ts"
 
 import {
   isNull,
   bufferToHash,
   todayString,
+  metaResourcePath,
 } from "./../common/util.ts";
+
+// index.htmlのインラインスクリプトで定義されているであろうリモートパスのグローバル宣言
+declare var remoteStorageURL: string;
+
+const viewerRequestOfRemoteGet = async(
+  hash: string,
+  force = false,
+): Promise<Node[]> =>  {
+
+  const pathStruct = metaResourcePath(hash)
+  if (remoteStorageURL == "") {
+    console.warn(`
+    リモートストレージパスが設定されていません。
+    HTML内で下記のように定義してください。
+    例:
+    <script>
+      var remoteStorageURL = "https://raw.githubusercontent.com/ArbaVojaganto/hogeRepository/main/"
+    </script>
+    `)
+  } 
+
+  const path = remoteStorageURL + pathStruct.prefix + pathStruct.hashDir + pathStruct.hash + pathStruct.extention
+  const response = await GetRequest(path);
+  if (isNull(response)) return []
+  const json = await response.json();
+  console.log(json);
+
+  if (Node.validation(json)) {
+    console.log(`remoteGet: ${json}`)
+    const nodeArray = [json]
+    return nodeArray
+  } else {
+    console.warn("Nodeとして解釈できないものを取得しました")
+    return []
+  }
+}
 
 
 export class ViewerApplication {
@@ -31,6 +71,7 @@ export class ViewerApplication {
     public document: HTMLDocument,
     public containerNode: Element,
   ) {
+    this.store.setRemoteGetMethod(viewerRequestOfRemoteGet)
     this.scopeGraphHistory = new ScopeGraphManager()
     this.canvasManager = new CanvasManager( this.document, this.containerNode)
   }
@@ -163,7 +204,6 @@ class GlobalMenu {
 
 
 }
-
 
 
 
