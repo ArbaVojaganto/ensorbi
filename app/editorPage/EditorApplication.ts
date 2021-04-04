@@ -397,7 +397,7 @@ class NoScopeGraph {
   public removeDependancy = () => {}
 }
 
-class ScopeGraphManager {
+export class ScopeGraphManager {
   public bufferSize = 10
   // リングバッファにしたい
   public history: SingleNodeTargetScopeGraph[] = Array<SingleNodeTargetScopeGraph>()
@@ -477,7 +477,7 @@ class ScopeGraphManager {
   }
 }
 
-class StoredNodes {
+export class StoredNodes {
   // ノード辞書
   private dict: NodeDictionary = {}
   private onRegister = (): void => {}
@@ -1146,7 +1146,7 @@ export class GlobalMenu {
       tagHashDict,
       scopeManager,
     )
-    return undefined;
+    return i
   }
 }
 
@@ -1251,7 +1251,7 @@ const nodeToRecursiveUList  = (document: HTMLDocument, node: Node): HTMLUListEle
  * /LocalMenu
  *  /NodeDetail
  */
-class LocalMenu extends HTMLDivElement {
+export class LocalMenu extends HTMLDivElement {
   detail: NodeDetail | undefined
     //this.localMenu = new LocalMenu(this.store.tagHashDict, this.store.fetch, this.store.update, this.reload)
   constructor(
@@ -1315,7 +1315,7 @@ class LocalMenu extends HTMLDivElement {
  *  /downloadLink
  *  /jsonTextArea
  */
-class NodeDetail extends HTMLDivElement {
+export class NodeDetail extends HTMLDivElement {
   private modalOpenElement: HTMLDivElement | undefined
   private modalWindowElement: HTMLElement | undefined
   private remoteOpenOrgElement: HTMLDivElement | undefined
@@ -1588,7 +1588,6 @@ export class EditorApplication {
   store: StoredNodes = new  StoredNodes()
   scopeGraphHistory = new ScopeGraphManager()
   globalMenu: GlobalMenu | undefined
-  messageQueue: { event: string, value: any }[] = []
   canvasManager: CanvasManager | undefined
   localMenu: LocalMenu | undefined
 
