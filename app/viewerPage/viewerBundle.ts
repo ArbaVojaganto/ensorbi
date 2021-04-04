@@ -6,14 +6,8 @@ import {
 
 
 const updateStorage = async(path: string) => {
-  // とりあえず全部削除して全部消す?
-  try { 
-    await Deno.remove(path + 'storage')
-  }
-  catch(e) {
-    console.log(e)
-  }
   const opt: CopyOptions = { overwrite: true }
+  console.log(`copy 'storage/' -> '${path}storage/')`)
   await copy('storage', path + 'storage', opt)
 }
 
