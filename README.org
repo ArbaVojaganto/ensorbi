@@ -22,18 +22,50 @@ deno: 1.8.3
 $ deno run -A --unstable ./app/server/main.ts --http-server
 #+END_SRC
 
-*** bundle client script
+*** bundle editor client script
 #+BEGIN_SRC
-$ deno bundle --unstable --config tsconfig.json ./app/index.ts ./app/index.bundle.js
+$ deno bundle --unstable --config tsconfig.json ./app/editorPage/index.ts ./app/editorPage/index.bundle.js
 #+END_SRC
 
-*** viewer client generate
+*** bundle viewer client script
+#+BEGIN_SRC
+$ deno bundle --unstable --config tsconfig.json ./app/editorPage/index.ts ./app/editorPage/index.bundle.js
+#+END_SRC
+
 
 ** advanced
+
+** experimental
 *** reconstruct referrers
 #+BEGIN_SRC
 $ deno run -A --unstable ./app/server/main.ts --reconstruct-referrers
 #+END_SRC
+
+*** viewer deploy to "Deno Deploy"
+1. setup
+#+BEGIN_SRC
+$ cd ${RepositoryRoot}
+$ deno run -A --unstable ./app/server/main.ts --build-deno-deploy-project
+$ vim ./build/viewer/index.html
+
+  <script>
+- remoteStorageURL = ""
++ remoteStorageURL = "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${branch-name}/"
+  </script>
+#+END_SRC
+
+2. bundle
+#+BEGIN_SRC
+$ deno run -A --unstable ./app/server/main.ts --build-deno-deploy-project
+#+END_SRC
+
+3. gitpush
+
+4. register entrypoint of Deno Deploy
+link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${branch-name}/main.ts"
+
+5. access
+
 
 ** todo
 *** abstractを書く
@@ -48,7 +80,6 @@ $ deno run -A --unstable ./app/server/main.ts --reconstruct-referrers
 
 
 *** viewer機能
-**** DenoDeploy向けビューワープロジェクトの生成機能
 
 ** LICENSE
 Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.  

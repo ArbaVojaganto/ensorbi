@@ -43,7 +43,7 @@ Deno.args.forEach((arg, index) => {
             break
         }
         case "--build-deno-deploy-project": {
-            let path = (index + 1 <= Deno.args.length)? Deno.args[index+1] : "build/viewer/"
+            let path = (index + 1 < Deno.args.length)? Deno.args[index+1] : "build/viewer/"
             path = (path.endsWith("/") || path.endsWith("\\"))? path: path+"/"
             
             buildDenoDeployProject(path)
