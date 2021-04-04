@@ -446,7 +446,7 @@ export class Graph {
     }
 
     function capture(e) {
-      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+~\\/?<>'\".,;:~`[]{}|-= ";
+      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+~\\/?<>'" + '".,;:~`[]{}|-= ';
       if (this.active != null) {
         if (letters.indexOf(e.key) > -1) {
           e.output = e.key;
