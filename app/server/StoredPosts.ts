@@ -24,12 +24,12 @@ import { ensureDir } from './deps.ts'
 
 const createOrThroughOrgFile = async (node: Node) => {
   const orgPath = orgmodeResourcePath(node.hash)
-  const path = "storage/" + orgPath.prefix+orgPath.hashDir+orgPath.hash+orgPath.extention
+  const path = orgPath.prefix+orgPath.hashDir+orgPath.hash+orgPath.extention
   console.log(path)
   try {
     await Deno.readTextFile(path)
   } catch(e) {
-    await ensureDir("storage/" + orgPath.prefix+orgPath.hashDir)
+    await ensureDir(orgPath.prefix+orgPath.hashDir)
     await Deno.writeTextFile(path, `
 #+TITLE:${node.title}
 #+DATE:${node.createdAt}

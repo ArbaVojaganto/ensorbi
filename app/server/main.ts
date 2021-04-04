@@ -27,31 +27,33 @@ const migrationMetaFile = async () => {
     await posts.migrationMetaFile()
 }
 
-for await (const arg of Deno.args) {
+Deno.args.forEach((arg, index) => {
     console.log(`arg: ${arg}`)
     switch(arg) {
         case "--http-server": {
-            await startHttpServer()
+            startHttpServer()
             break
         }
         case "--reconstruct-referrers": {
-            await reconstructReferrers()
+            reconstructReferrers()
             break
         }
         case "--migrate-meta-file": {
-            await migrationMetaFile()
+            migrationMetaFile()
             break
         }
         case "--build-deno-deploy-project": {
+            let path = (index + 1 <= Deno.args.length)? Deno.args[index+1] : "build/viewer/"
+            path = (path.endsWith("/") || path.endsWith("\\"))? path: path+"/"
             
-            await buildDenoDeployProject("build/viewer/")
+            buildDenoDeployProject(path)
             break
         }
         default: {
             console.warn('許容できない引数が指定されてます')
         }
     }
-}
+})
 
 
-console.log('startup process finish')
+console.log('arguments parse finish')
