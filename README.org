@@ -77,6 +77,7 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 **** クエリを発効してネットワークのノードをフィルターできるようにする
 **** VRM読みこみとなんかいい感じに馴染むUIの作成
 **** タグ検索
+**** LatestUpdateNodeみたいなノードを組みこんでエントリーポイントノードにつける
 
 
 *** viewer機能
