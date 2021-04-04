@@ -3,6 +3,8 @@ ensorbi is a mechanism to absorb your experience.
 
 [[./doc/ensorbi-demo-4.gif]]
 
+** abstract
+
 ** last check environment
 windows10
 deno: 1.8.3
@@ -32,6 +34,21 @@ $ deno bundle --unstable --config tsconfig.json ./app/index.ts ./app/index.bundl
 #+BEGIN_SRC
 $ deno run -A --unstable ./app/server/main.ts --reconstruct-referrers
 #+END_SRC
+
+** todo
+*** abstractを書く
+*** editor機能
+**** グラフ内のノード変更時にグラフの描画が止まってしまう問題の解消
+ちょっとずつネットワークに追加されていく様が反映されて欲しい
+**** ノード削除機能
+**** ノードプロパティ更新機能
+**** クエリを発効してネットワークのノードをフィルターできるようにする
+**** VRM読みこみとなんかいい感じに馴染むUIの作成
+**** タグ検索
+
+
+*** viewer機能
+**** DenoDeploy向けビューワープロジェクトの生成機能
 
 ** LICENSE
 Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.  
