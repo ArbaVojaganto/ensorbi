@@ -568,7 +568,7 @@ class StoredNodes {
     force = false,
   ): Promise<Node[]> =>  {
     const pathStruct = metaResourcePath(hash)
-    const path = "storage/" + pathStruct.prefix + pathStruct.hashDir + pathStruct.hash + pathStruct.extention
+    const path = pathStruct.prefix + pathStruct.hashDir + pathStruct.hash + pathStruct.extention
     const response = await GetRequest(path);
     //const response = await GetRequest( "/posts/" + hash )
     if (isNull(response)) return []
@@ -1442,7 +1442,7 @@ class NodeDetail extends HTMLDivElement {
     this.descriptionElement.innerText = node.description
 
     const orgPathData = orgmodeResourcePath(node.hash)
-    this.orgmodeLinkElement.href = "storage/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
+    this.orgmodeLinkElement.href = orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
     this.downloadLinkElement.href = "にゃーん"
     this.downloadLinkElement.textContent = "ダウンロード"
     this.jsonTextAreaElement.value = JSON.stringify(node)
@@ -1453,7 +1453,8 @@ class NodeDetail extends HTMLDivElement {
       node.extention == ".jpg" ||
       node.extention == ".gif"
       ) ) {
-      this.thumbnailElement.src = "storage/" + "blob/" + orgPathData.hashDir + orgPathData.hash + node.extention
+      const blobPathData = blobResourcePath(node.hash)
+      this.thumbnailElement.src = blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
       this.thumbnailElement.hidden = false
     } else {
       if (node.thumbnail == "") {
@@ -1472,7 +1473,7 @@ class NodeDetail extends HTMLDivElement {
         this.modalWindowElement.removeChild(this.modalWindowElement.firstChild);
       }
       const iframe = document.createElement("iframe")
-      iframe.src = "storage/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
+      iframe.src = orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
       this.modalWindowElement.appendChild(iframe)
     }
 
@@ -1503,8 +1504,8 @@ class NodeDetail extends HTMLDivElement {
     if (this.remoteOpenOrgElement) {
       // 子要素を掃除
       removeAllChild(this.remoteOpenOrgElement)
-      const xdgOpenOrgPath = "remote-xdg-like-open/" + "storage/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
-      const elems = PathElement( "org", "/storage/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention, xdgOpenOrgPath)
+      const xdgOpenOrgPath = "remote-xdg-like-open/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
+      const elems = PathElement( "org", "/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention, xdgOpenOrgPath)
       elems.forEach( e => { if (this.remoteOpenOrgElement) { this.remoteOpenOrgElement.appendChild(e)} })
     }
 
@@ -1513,8 +1514,8 @@ class NodeDetail extends HTMLDivElement {
       if (BlobMeta.validation(node) ) {
         removeAllChild(this.remoteOpenBlobElement)
         const blobPathData = blobResourcePath(node.hash)
-        const xdgOpenBlobPath = "remote-xdg-like-open/" + "storage/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
-        const elems = PathElement("blob", "/storage/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention, xdgOpenBlobPath)
+        const xdgOpenBlobPath = "remote-xdg-like-open/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
+        const elems = PathElement("blob", "/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention, xdgOpenBlobPath)
         elems.forEach( e => { if (this.remoteOpenBlobElement) { this.remoteOpenBlobElement.appendChild(e)} })
         this.remoteOpenBlobElement.hidden = false
       } else {
@@ -1525,8 +1526,8 @@ class NodeDetail extends HTMLDivElement {
     if (this.remoteOpenMetaElement) {
       removeAllChild(this.remoteOpenMetaElement)
       const metaPathData = metaResourcePath(node.hash)
-      const xdgOpenMetaPath = "remote-xdg-like-open/" + "storage/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention
-      const elems = PathElement("json", "/storage/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention, xdgOpenMetaPath)
+      const xdgOpenMetaPath = "remote-xdg-like-open/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention
+      const elems = PathElement("json", "/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention, xdgOpenMetaPath)
       elems.forEach( e => { if (this.remoteOpenMetaElement) { this.remoteOpenMetaElement.appendChild(e)} })
     }
 
