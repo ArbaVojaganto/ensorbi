@@ -33,11 +33,9 @@ const viewerRequestOfRemoteGet = async(
   if (remoteStorageURL == "") {
     console.warn(`
     リモートストレージパスが設定されていません。
-    HTML内で下記のように定義してください。
+    HTML内で下記の例のようにノード情報の配置場所を定義してください。
     例:
-    <script>
-      var remoteStorageURL = "https://raw.githubusercontent.com/ArbaVojaganto/hogeRepository/main/"
-    </script>
+    var remoteStorageURL = "https://raw.githubusercontent.com/ArbaVojaganto/hogeRepository/main/"
     `)
   } 
 

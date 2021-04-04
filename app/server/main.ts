@@ -4,6 +4,8 @@ import { routes } from "./router.ts"
 import { posts, StoredPosts, registerTagMeta } from "./StoredPosts.ts"
 import { TagMeta } from "./../models/tags.ts"
 import { bufferToHash } from "./../common/util.ts"
+import { buildDenoDeployProject } from "./../viewerPage/viewerBundle.ts"
+
 
 const startHttpServer = async () => {
     const app = createApp();
@@ -38,6 +40,11 @@ for await (const arg of Deno.args) {
         }
         case "--migrate-meta-file": {
             await migrationMetaFile()
+            break
+        }
+        case "--build-deno-deploy-project": {
+            
+            await buildDenoDeployProject("build/viewer/")
             break
         }
         default: {
