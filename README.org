@@ -2,15 +2,21 @@
 ensorbi is a mechanism to absorb your experience.
 
 ** last check environment
+windows10
 deno: 1.8.3
 
 ** setup
+
+1. [[https://deno.land/manual/getting_started/installation][install of Deno]]
+2. git clone of this repository
+
+
 
 ** usage
 
 *** server start
 #+BEGIN_SRC
-$ deno run -A --unstable ./app/main.ts
+$ deno run -A --unstable ./app/server/main.ts --http-server
 #+END_SRC
 
 *** bundle client script
@@ -20,10 +26,15 @@ $ deno bundle --unstable --config tsconfig.json ./app/index.ts ./app/index.bundl
 
 *** viewer client generate
 
+** advanced
+*** reconstruct referrers
+#+BEGIN_SRC
+$ deno run -A --unstable ./app/server/main.ts --reconstruct-referrers
+#+END_SRC
 
 ** LICENSE
-各コードとファイルはそれ自体にライセンス表記がない限り、"LICENSE"で記述されたライセンスの元で提供されます。
-また、貢献者はその貢献が上述のライセンスに従うことに同意する必要があります。
-
-Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.
+Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.  
 Contributors need to agree that their contributions are subject to the licenses mentioned above.
+
+各コードとファイルはそれ自体にライセンス表記がない限り、"LICENSE"で記述されたライセンスの元で提供されます。  
+また、貢献者はその貢献が上述のライセンスに従うことに同意する必要があります。
