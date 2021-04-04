@@ -17,10 +17,10 @@ export const buildDenoDeployProject = async(path: string) => {
     console.log(`copy 'app/viewerPage/index.html' -> '${path}index.html')`)
     Deno.copyFile('app/viewerPage/index.html', path + 'index.html')
   }
-  if (!await exists(path + "index.bundle.js")) {
+  //if (!await exists(path + "index.bundle.js")) {
     console.log(`copy 'app/viewerPage/index.bundle.js' -> '${path}index.bundle.js')`)
     Deno.copyFile('app/viewerPage/index.bundle.js', path + 'index.bundle.js')
-  }
+  //}
 
   await updateStorage(path)
 
