@@ -565,22 +565,32 @@ class StoredNodes {
 
   private remoteGet = async(
     hash: string,
-    force: boolean = false,
+    force = false,
   ): Promise<Node[]> =>  {
-
-    const response = await GetRequest( "/posts/" + hash )
+    const pathStruct = metaResourcePath(hash)
+    const path = "storage/" + pathStruct.prefix + pathStruct.hashDir + pathStruct.hash + pathStruct.extention
+    const response = await GetRequest(path);
+    //const response = await GetRequest( "/posts/" + hash )
     if (isNull(response)) return []
-    const json = await response.json()
+    const json = await response.json();
     console.log(json);
 
-    // レスポンスの連想配列からノード集合以外をとりのぞく
-    const nodes = Object.values(json).filter(( node ): node is Node => {
-      const result = Node.validation(node)
-      if (!result) throw new Error('バリデーション不能なjsonが混入しています')
-      return result
-    })
+    if (Node.validation(json)) {
+      console.log(`remoteGet: ${json}`)
+      const nodeArray = [json]
+      return nodeArray
+    } else {
+      console.warn("Nodeとして解釈できないものを取得しました")
+      return []
+    }
 
-    return nodes
+    // レスポンスの連想配列からノード集合以外をとりのぞく
+    //const nodes = Object.values(json).filter(( node ): node is Node => {
+    //  const result = Node.validation(node)
+    //  if (!result) throw new Error('バリデーション不能なjsonが混入しています')
+    //  return result
+    //})
+
   }
 }
 
