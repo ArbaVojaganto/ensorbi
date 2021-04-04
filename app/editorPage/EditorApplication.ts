@@ -1614,13 +1614,13 @@ export class EditorApplication {
   init = ()=> {
     if (isNull(this.canvasManager) || isNull(this.canvasManager.graphCanvas)) return 
     this.canvasManager.init()
-    const node = bufferToHash("node")
+    //const node = bufferToHash("node")
     //const tag = bufferToHash("tag")
     //const blob = bufferToHash("blob")
-    //const entryPoint = bufferToHash("entryPoint")
+    const entryPoint = bufferToHash("entryPoint")
 
     // initialノード
-    const n = node
+    const n = entryPoint
 
       // グラフマネージャーを初期化する
     this.scopeGraphHistory.dependancyModuleInjection(this.canvasManager, this.store, this.activateNode)
