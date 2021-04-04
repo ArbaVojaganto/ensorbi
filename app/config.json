@@ -1,0 +1,13 @@
+{
+    "storagePrefixPath": "storage",
+    "storageBlobPath": "blob",
+    "storageMetaPath": "meta",
+    "storageDepth": 3,
+    "entryPointHash": "",
+    "uniqueHashs": {
+        "node": "545ea538461003efdc8c81c244531b003f6f26cfccf6c0073b3239fdedf49446",
+        "tag": "2a1073a6e67f0e5f09a5957c659503c690efe7272be8313df872556a9a684d8c",
+        "blob": "fa2c8cc4f28176bbeed4b736df569a34c79cd3723e9ec42f9674b4d46ac6b8b8",
+        "entryPoint": "e04c95172275d27175062d771f56a37ffcefc9d0b7fec6ed6cd2229a2a753189"
+    }
+}

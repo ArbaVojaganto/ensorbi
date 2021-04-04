@@ -1,0 +1,29 @@
+* ensorbi
+ensorbi is a mechanism to absorb your experience.
+
+** last check environment
+deno: 1.8.3
+
+** setup
+
+** usage
+
+*** server start
+#+BEGIN_SRC
+$ deno run -A --unstable ./app/main.ts
+#+END_SRC
+
+*** bundle client script
+#+BEGIN_SRC
+$ deno bundle --unstable --config tsconfig.json ./app/index.ts ./app/index.bundle.js
+#+END_SRC
+
+*** viewer client generate
+
+
+** LICENSE
+各コードとファイルはそれ自体にライセンス表記がない限り、"LICENSE"で記述されたライセンスの元で提供されます。
+また、貢献者はその貢献が上述のライセンスに従うことに同意する必要があります。
+
+Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.
+Contributors need to agree that their contributions are subject to the licenses mentioned above.
