@@ -31,7 +31,8 @@ export const routes = () => {
   router.delete(new RegExp("^posts/(.+)"), deletePost)
 
   router.get(new RegExp("^storage/blob/(.+)"), GetStorageBlobResource)
-  router.get(new RegExp("^storage/org/(.+)"), GetStorageResource)
+  router.get(new RegExp("^storage/org/(.+)"), GetStorageOrgResource)
+  router.get(new RegExp("^storage/meta/(.+)"), GetStorageMetaResource)
   router.get(new RegExp("^remote-xdg-like-open/(.+)"), RemoteOpenFile)
 
   return router;
@@ -88,12 +89,23 @@ const failResponse = async(req: ServerRequest) => {
   })
 }
 
-const GetStorageResource = async(req: ServerRequest) => {
+const GetStorageOrgResource = async(req: ServerRequest) => {
   console.log(req.url)
   await req.respond({
     status: 200,
     headers: new Headers({
       "content-type": "text/plain; charset=UTF-8",
+    }),
+    body: new TextDecoder("utf-8").decode(await Deno.readFile(req.url.substring(1)))
+  })
+}
+
+const GetStorageMetaResource = async(req: ServerRequest) => {
+  console.log(req.url)
+  await req.respond({
+    status: 200,
+    headers: new Headers({
+      "content-type": "text/json; charset=UTF-8",
     }),
     body: new TextDecoder("utf-8").decode(await Deno.readFile(req.url.substring(1)))
   })
@@ -105,7 +117,7 @@ const Script = async (req: any) => {
     headers: new Headers({
       "content-type": "text/javascript; charset=UTF-8",
     }),
-    //body: new TextDecoder("utf-8").decode(await Deno.readFile("app/index.bundle.js"))
+    //body: new TextDecoder("utf-8").decode(await Deno.readFile("app/viewerPage/index.bundle.js"))
     body: new TextDecoder("utf-8").decode(await Deno.readFile("app/editorPage/index.bundle.js"))
   });
 }
@@ -116,7 +128,7 @@ const Page = async (req: any) => {
     headers: new Headers({
       "content-type": "text/html; charset=UTF-8",
     }),
-    //body:new TextDecoder("utf-8").decode(await Deno.readFile("app/index.html"))
+    //body:new TextDecoder("utf-8").decode(await Deno.readFile("app/viewerPage/index.html"))
     body:new TextDecoder("utf-8").decode(await Deno.readFile("app/editorPage/index.html"))
   });
 };

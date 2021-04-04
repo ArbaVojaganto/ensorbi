@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <!--
+      <link rel="stylesheet" href="stylesheet.css">
+    -->
+    <style>
+
+      /* reset.css begin */
+
+      /* http://meyerweb.com/eric/tools/css/reset/ 
+         v2.0 | 20110126
+         License: none (public domain)
+      */
+
+      html, body, div, span, applet, object, iframe,
+      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+      a, abbr, acronym, address, big, cite, code,
+      del, dfn, em, img, ins, kbd, q, s, samp,
+      small, strike, strong, sub, sup, tt, var,
+      b, u, i, center,
+      dl, dt, dd, ol, ul, li,
+      fieldset, form, label, legend,
+      table, caption, tbody, tfoot, thead, tr, th, td,
+      article, aside, canvas, details, embed, 
+      figure, figcaption, footer, header, hgroup, 
+      menu, nav, output, ruby, section, summary,
+      time, mark, audio, video {
+      	margin: 0;
+      	padding: 0;
+      	border: 0;
+      	font-size: 100%;
+      	font: inherit;
+      	vertical-align: baseline;
+      }
+      /* HTML5 display-role reset for older browsers */
+      article, aside, details, figcaption, figure, 
+      footer, header, hgroup, menu, nav, section {
+      	display: block;
+      }
+      body {
+      	line-height: 1;
+      }
+      ol, ul {
+      	list-style: none;
+      }
+      blockquote, q {
+      	quotes: none;
+      }
+      blockquote:before, blockquote:after,
+      q:before, q:after {
+      	content: '';
+      	content: none;
+      }
+      table {
+      	border-collapse: collapse;
+      	border-spacing: 0;
+      }
+      /* reset.css end */
+
+
+
+
+    body {
+      overflow: hidden;
+      margin: 0;
+      border: 0;
+      background-color: white;
+    }
+
+    #network-graph {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #network-graph-canvas {
+      position: absolute;
+      z-index: 3;
+    }
+
+    #network-graph-global-menu {
+      z-index:4;
+    }
+
+    #file-uploader{
+      background-color: #f4f4f4;
+      margin: 10px;
+      padding: 10px;
+      border: #ddd dashed 5px;
+      min-height: 200px;
+      text-align: center;
+      display: grid;
+    }
+    #dragDropArea p{
+        color: #999;
+        font-weight: bold;
+        font-size: 14px;
+        font-size: 1.4em;
+    }
+    #dragDropArea .drag-drop-buttons{
+        margin-top: 20px;
+        font-size: 12px;
+        font-size: 1.2em;
+    }
+    .drag-drop-buttons input{
+        margin: auto;
+    }
+
+    img.uploaderPreview {
+      width: 300px;
+      height: 300px;
+    }
+
+    img.thumbnail {
+      width: 500px; height: 500px;
+      object-fit: contain;
+    }
+
+
+    #network-graph-local-menu {
+      z-index: 5;
+    }
+
+    .node-detail {
+      z-index: 5;
+      display: grid;
+    }
+
+    .accordion-child {
+      margin-left: 1em;
+    }
+
+    #open,
+    #close {
+      cursor: pointer;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+      padding: 12px;
+      margin: 16px auto 0;
+      background: #4caf50;
+      color: white;
+    }
+
+    #mask {
+      background: rgba(0, 0, 0, 0.4);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    #modal {
+      background: #fff;
+      color: #555;
+      width: 900px;
+      height: 900px;
+      padding: 40px;
+      border-radius: 4px;
+      position: absolute;
+      top: 40px;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      z-index: 11;
+      transition: 0.4s;
+    }
+
+    #modal p {
+      margin: 0 0 20px;
+    } 
+
+    #mask.hidden {
+      display: none;
+    }
+
+    #modal.hidden {
+      transform: translate(0, -1200px);
+    }
+
+    #select-file {
+      z-index: 12;
+    }
+
+
+    .accordion ul {
+    	list-style: none;
+    	margin:0;
+    }
+    label{
+    	cursor: pointer;
+    }
+    .toggle{
+      z-index: 12;
+    }
+    .toggle + ul{
+    	max-height: 0;
+    	overflow: hidden;
+    	/*max-height: 500px;
+    	transition: all .5s ease;
+      */
+    }
+    .toggle:checked + ul{
+      max-height: 1000px;
+    	/*
+    	transition: all 2s ease-in;
+      */
+    }
+
+    .three-canvas {
+      position: absolute;
+      z-index: 2;
+    }
+
+    </style>
+
+</head>
+
+<body>
+
+  <div id="mask" class="hidden"></div>
+  <div id="modal" class="hidden"></div>
+
+  <div id="network-graph">
+  </div>
+  <script>
+    remoteStorageURL = ""
+  </script>
+  <script src="index.bundle.js"></script>
+</body>
+
+</html>
+
+<!--
+
+* LICENSE
+
+```
+MIT License
+
+Copyright (c) 2021 ArbaVojaganto
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+```
+MIT License
+
+Copyright (c) 2020 Paul Fears
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+```
+MIT License
+
+Copyright 2018-2021 the Deno authors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+-->

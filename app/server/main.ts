@@ -4,6 +4,8 @@ import { routes } from "./router.ts"
 import { posts, StoredPosts, registerTagMeta } from "./StoredPosts.ts"
 import { TagMeta } from "./../models/tags.ts"
 import { bufferToHash } from "./../common/util.ts"
+import { buildDenoDeployProject } from "./../viewerPage/viewerBundle.ts"
+
 
 const startHttpServer = async () => {
     const app = createApp();
@@ -25,26 +27,33 @@ const migrationMetaFile = async () => {
     await posts.migrationMetaFile()
 }
 
-for await (const arg of Deno.args) {
+Deno.args.forEach((arg, index) => {
     console.log(`arg: ${arg}`)
     switch(arg) {
         case "--http-server": {
-            await startHttpServer()
+            startHttpServer()
             break
         }
         case "--reconstruct-referrers": {
-            await reconstructReferrers()
+            reconstructReferrers()
             break
         }
         case "--migrate-meta-file": {
-            await migrationMetaFile()
+            migrationMetaFile()
+            break
+        }
+        case "--build-deno-deploy-project": {
+            let path = (index + 1 < Deno.args.length)? Deno.args[index+1] : "build/viewer/"
+            path = (path.endsWith("/") || path.endsWith("\\"))? path: path+"/"
+            
+            buildDenoDeployProject(path)
             break
         }
         default: {
             console.warn('許容できない引数が指定されてます')
         }
     }
-}
+})
 
 
-console.log('startup process finish')
+console.log('arguments parse finish')

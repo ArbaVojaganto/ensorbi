@@ -82,15 +82,15 @@ export const hashToRemoteResourcePath = (hash: string) => {
 }
 
 export const orgmodeResourcePath = (hash: string) => {
-  return { prefix: "org/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".org" }
+  return { prefix: "storage/org/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".org" }
 }
 
 export const blobResourcePath = (hash: string) => {
-  return { prefix: "blob/", hashDir: hashToRemoteResourcePath(hash), hash: hash }
+  return { prefix: "storage/blob/", hashDir: hashToRemoteResourcePath(hash), hash: hash }
 }
 
 export const metaResourcePath = (hash: string) => {
-  return { prefix: "meta/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".json" }
+  return { prefix: "storage/meta/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".json" }
 }
 
 export const todayString = () => {
