@@ -70,7 +70,8 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 
 ** todo
 *** abstractを書く
-*** editor機能
+
+*** editor
 **** グラフ内のノード変更時にグラフの描画が止まってしまう問題の解消
 ちょっとずつネットワークに追加されていく様が反映されて欲しい
 **** ノード削除機能
@@ -79,11 +80,16 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 **** VRM読みこみとなんかいい感じに馴染むUIの作成
 **** タグ検索
 **** LatestUpdateNodeみたいなノードを組みこんでエントリーポイントノードにつける
+**** EditorApplication.tsをバラす
+ビルド時に必要のないコードが混入して肥大化するため
 
-
-*** viewer機能
+*** viewer
 **** 画像がひっぱってこれているか調査
 **** LocalMenuの必要のないUIを消す
+
+*** build
+**** 公開マーキングしたものだけを含んでviewerプロジェクトを生成できるようにしたい
+
 
 ** LICENSE
 Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.  
