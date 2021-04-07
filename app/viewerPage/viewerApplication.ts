@@ -2,18 +2,18 @@
 import { Node } from "./../models/Node.ts"
 
 import {
-  ScopeGraphManager,
   LocalMenu,
 } from "./../editorPage/EditorApplication.ts"
 import {
   CanvasManager,
-} from "./../editorPage/CanvasManager.ts"
+} from "./../client/CanvasManager.ts"
 import {
   GetRequest,
 } from "./../client/util.ts"
 
-import { StoredNodes } from "./../editorPage/StoredNodes.ts"
+import { StoredNodes } from "./../client/StoredNodes.ts"
 import { NodeDetail } from "./../editorPage/NodeDetail.ts"
+import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
 
 import {
   isNull,
@@ -21,6 +21,7 @@ import {
   todayString,
   metaResourcePath,
 } from "./../common/util.ts";
+
 
 // index.htmlのインラインスクリプトで定義されているであろうリモートパスのグローバル宣言
 declare var remoteStorageURL: string;
