@@ -17,15 +17,10 @@ import {
 } from "./../common/util.ts";
 
 import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
-import { NodeDetail } from "./../editorPage/NodeDetail.ts"
+import { EditableNodeDetail } from "./../client/NodeDetail.ts"
 import { StoredNodes } from "./../client/StoredNodes.ts"
 import { CanvasManager } from "./../client/CanvasManager.ts"
 import { SingleFileUploader } from "./../editorPage/SingleFileUploader.ts"
-
-
-
-
-
 
 
 
@@ -255,10 +250,10 @@ const parseHtmlElement = (element: HTMLElement): any => {
 
 /**
  * /LocalMenu
- *  /NodeDetail
+ *  /EditableNodeDetail
  */
 export class LocalMenu extends HTMLDivElement {
-  detail: NodeDetail | undefined
+  detail: EditableNodeDetail | undefined
     //this.localMenu = new LocalMenu(this.store.tagHashDict, this.store.fetch, this.store.update, this.reload)
   constructor(
     tagHashDict: () => NodeDictionary,
@@ -276,11 +271,9 @@ export class LocalMenu extends HTMLDivElement {
     // タグ追加ボタン
     const tagAdder = CreateInputButton(document, "tagInsert", () => {})
 
-    this.detail = new NodeDetail(
+    this.detail = new EditableNodeDetail(
       document.createElement('p'),
       document.createElement('p'),
-      document.createElement('a'),
-      document.createElement('a'),
       document.createElement('a'),
       document.createElement('textarea'),
       document.createElement('img'),
@@ -358,7 +351,7 @@ export class EditorApplication {
     )
 
     customElements.define('localmenu-div', LocalMenu, {extends: 'div'})
-    customElements.define('node-detail-div', NodeDetail, {extends: 'div'})
+    customElements.define('node-detail-div', EditableNodeDetail, {extends: 'div'})
 
   }
 

@@ -1,9 +1,7 @@
 
+import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../models/Node.ts"
 import { Node } from "./../models/Node.ts"
 
-import {
-  LocalMenu,
-} from "./../editorPage/EditorApplication.ts"
 import {
   CanvasManager,
 } from "./../client/CanvasManager.ts"
@@ -12,7 +10,7 @@ import {
 } from "./../client/util.ts"
 
 import { StoredNodes } from "./../client/StoredNodes.ts"
-import { NodeDetail } from "./../editorPage/NodeDetail.ts"
+import { ReadOnlyNodeDetail } from "./../client/NodeDetail.ts"
 import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
 
 import {
@@ -97,7 +95,7 @@ export class ViewerApplication {
     )
 
     customElements.define('localmenu-div', LocalMenu, {extends: 'div'})
-    customElements.define('node-detail-div', NodeDetail, {extends: 'div'})
+    customElements.define('node-detail-div', ReadOnlyNodeDetail, {extends: 'div'})
   }
 
   reload = async () => {
@@ -136,6 +134,41 @@ export class ViewerApplication {
     })
 
     requestAnimationFrame(this.update);
+  }
+
+}
+
+/**
+ * /LocalMenu
+ *  /NodeDetail
+ */
+export class LocalMenu extends HTMLDivElement {
+  detail: ReadOnlyNodeDetail | undefined
+  constructor(
+    tagHashDict: () => NodeDictionary,
+    private fetchNode: (uri: string) => Promise<Node | undefined>,
+    private updateNode: (node: Node, optionFormData: FormData) => Promise<Node[]>,
+    private reload: () => void
+  ) {
+    super()
+    this.id = "network-graph-local-menu"
+
+    this.detail = new ReadOnlyNodeDetail (
+      this.fetchNode
+    )
+
+    this.appendChild(this.detail)
+  }
+
+  public setDetail(node: Node) {
+    if (isNull(this.detail)) return
+    this.detail.setDetail(node)
+  }
+
+  public reloadDetail() {
+    if (!isNull(this.detail)) {
+      this.detail.reloadDetail()
+    }
   }
 
 }

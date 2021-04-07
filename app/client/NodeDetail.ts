@@ -1,6 +1,5 @@
 
 
-
 /// <reference lib="dom" />
 
 import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../models/Node.ts"
@@ -18,10 +17,178 @@ import {
 } from "./../common/util.ts";
 
 
+export class ReadOnlyNodeDetail extends HTMLDivElement {
+  private modalOpenElement: HTMLDivElement | undefined
+  private modalWindowElement: HTMLElement | undefined
+  private currentNode: Node | undefined
+  private titleElement: HTMLParagraphElement | undefined
+  private descriptionElement: HTMLParagraphElement | undefined
+  private thumbnailElement: HTMLImageElement | undefined
+  private properties: HTMLUListElement | undefined
+  private tags: HTMLUListElement | undefined
+  constructor (
+    private fetchNode: (uri: string) => Promise<Node | undefined>,
+  ) {
+    super()
+    this.classList.add("node-detail")
+
+    this.thumbnailElement = document.createElement('img')
+    this.thumbnailElement.classList.add("thumbnail")
+    this.thumbnailElement.hidden = true
+    this.appendChild(this.thumbnailElement)
+
+    this.titleElement = document.createElement('p')
+    this.titleElement.innerText = "title"
+    this.appendChild(this.titleElement)
+
+    this.descriptionElement = document.createElement('p')
+    this.descriptionElement.innerText = "description"
+    this.appendChild(this.descriptionElement)
+
+    // モーダルウィンドウテスト
+    const modal = document.getElementById('modal')
+    const mask = document.getElementById('mask')
+    this.modalOpenElement = document.createElement("div")
+
+    if (modal != null && mask != null && !isNull(this.modalOpenElement) ) {
+      this.modalOpenElement.id = "open"
+      this.modalOpenElement.innerText = "click to open content"
+      this.modalOpenElement.onclick = () => {
+          modal.classList.remove('hidden')
+          mask.classList.remove('hidden')
+      }
+      mask.onclick = () => {
+          modal.classList.add('hidden')
+          mask.classList.add('hidden')
+      }
+      this.appendChild(this.modalOpenElement)
+      this.modalWindowElement = modal
+    }
+  }
+
+
+  reloadDetail = async () => { 
+    if ( this.currentNode ) {
+      const remoteLatestNode = await this.fetchNode(this.currentNode.hash)
+      if ( !isNull(remoteLatestNode)){
+        this.setDetail( remoteLatestNode )
+      }
+    }
+  }
+
+  /**
+   * 指定ノードでDOMを更新する
+   * @param node 
+   */
+  public setDetail(node: Node) {
+    if (
+      isNull(this.titleElement) ||
+      isNull(this.thumbnailElement) ||
+      isNull(this.descriptionElement)
+    ) return
+    this.titleElement.innerText = node.title.substring(0,25)
+    this.descriptionElement.innerText = node.description
+
+    const orgPathData = orgmodeResourcePath(node.hash)
+
+    if (BlobMeta.validation(node) && (
+      node.extention == ".jpeg" ||
+      node.extention == ".png" ||
+      node.extention == ".jpg" ||
+      node.extention == ".gif"
+      ) ) {
+      const blobPathData = blobResourcePath(node.hash)
+      this.thumbnailElement.src = blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
+      this.thumbnailElement.hidden = false
+    } else {
+      if (node.thumbnail == "") {
+        this.thumbnailElement.hidden = true
+      } else {
+        this.thumbnailElement.src = node.thumbnail
+        this.thumbnailElement.hidden = false
+      }
+    }
+
+
+    // モーダルウィンドウを開いた時にiframeを生成する
+    if (this.modalWindowElement) {
+      // モーダルウィンドウ内を掃除
+      while (this.modalWindowElement.firstChild) {
+        this.modalWindowElement.removeChild(this.modalWindowElement.firstChild);
+      }
+      const iframe = document.createElement("iframe")
+      iframe.src = orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
+      this.modalWindowElement.appendChild(iframe)
+    }
+
+    // プロパティUIを作成する
+    const props = objToRecurisveAccordionMenu(document, node)
+    //props.textContent = "props"
+    if (isNull(this.properties)) {
+      this.appendChild(document.createTextNode("props: "))
+      this.properties = props
+      this.appendChild(this.properties)
+    } else {
+      this.replaceChild(props, this.properties)
+      this.properties = props
+    }
+
+    const tagsRoot = document.createElement('ul')
+    // タグUIを作成する
+    if (isNull(this.tags)) {
+      this.tags = tagsRoot
+      this.appendChild(this.tags)
+    } else {
+      this.replaceChild(tagsRoot, this.tags)
+      this.tags = tagsRoot
+    }
+
+    // 登録し直し
+    Object.entries(node.vector).forEach( async([target, label]) => {
+      // 非同期に実行されても大丈夫なはずなのでとりあえずawaitなし
+      const node = await this.fetchNode(target)
+      if (node) {
+        const li = document.createElement('li')
+        li.innerText = node.title
+        tagsRoot.appendChild(li)
+      }
+    })
+
+    // インスタンスを持たせておく
+    this.currentNode = node
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * CustomElement
  */
-export class NodeDetail extends HTMLDivElement {
+export class EditableNodeDetail extends HTMLDivElement {
   private modalOpenElement: HTMLDivElement | undefined
   private modalWindowElement: HTMLElement | undefined
   private remoteOpenOrgElement: HTMLDivElement | undefined
@@ -32,8 +199,6 @@ export class NodeDetail extends HTMLDivElement {
     private titleElement: HTMLParagraphElement,
     private descriptionElement: HTMLParagraphElement,
     private remoteLinkElement: HTMLAnchorElement,
-    private downloadLinkElement: HTMLAnchorElement,
-    private orgmodeLinkElement: HTMLAnchorElement,
     private jsonTextAreaElement: HTMLTextAreaElement,
     private thumbnailElement: HTMLImageElement,
     private tagSelectorElement: HTMLInputElement,
@@ -61,15 +226,6 @@ export class NodeDetail extends HTMLDivElement {
     this.remoteLinkElement.href = "remoteLink"
     this.appendChild(this.remoteLinkElement)
 
-    this.downloadLinkElement.href = "download"
-    this.appendChild(this.downloadLinkElement)
-
-    this.orgmodeLinkElement.href = "#"
-    const textNode = document.createTextNode("This is orgmode link")
-
-    this.orgmodeLinkElement.appendChild(textNode)
-    this.orgmodeLinkElement.title = "This is orgmode link"
-    this.appendChild(this.orgmodeLinkElement)
 
 
     // モーダルウィンドウテスト
@@ -148,9 +304,6 @@ export class NodeDetail extends HTMLDivElement {
     this.descriptionElement.innerText = node.description
 
     const orgPathData = orgmodeResourcePath(node.hash)
-    this.orgmodeLinkElement.href = orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
-    this.downloadLinkElement.href = "にゃーん"
-    this.downloadLinkElement.textContent = "ダウンロード"
     this.jsonTextAreaElement.value = JSON.stringify(node)
 
     if (BlobMeta.validation(node) && (

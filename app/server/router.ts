@@ -117,8 +117,8 @@ const Script = async (req: any) => {
     headers: new Headers({
       "content-type": "text/javascript; charset=UTF-8",
     }),
-    //body: new TextDecoder("utf-8").decode(await Deno.readFile("app/viewerPage/index.bundle.js"))
-    body: new TextDecoder("utf-8").decode(await Deno.readFile("app/editorPage/index.bundle.js"))
+    body: new TextDecoder("utf-8").decode(await Deno.readFile("app/viewerPage/index.bundle.js"))
+    //body: new TextDecoder("utf-8").decode(await Deno.readFile("app/editorPage/index.bundle.js"))
   });
 }
 
@@ -128,7 +128,7 @@ const Page = async (req: any) => {
     headers: new Headers({
       "content-type": "text/html; charset=UTF-8",
     }),
-    //body:new TextDecoder("utf-8").decode(await Deno.readFile("app/viewerPage/index.html"))
-    body:new TextDecoder("utf-8").decode(await Deno.readFile("app/editorPage/index.html"))
+    body:new TextDecoder("utf-8").decode(await Deno.readFile("app/viewerPage/index.html"))
+    //body:new TextDecoder("utf-8").decode(await Deno.readFile("app/editorPage/index.html"))
   });
 };

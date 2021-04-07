@@ -2,37 +2,20 @@
 
 /// <reference lib="dom" />
 
-import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../models/Node.ts"
 import { Node } from "./../models/Node.ts"
 import { BlobMeta} from "./../models/BlobMeta.ts"
-import { TagMeta } from "./../models/tags.ts"
-import { SymbolNode } from "./../models/SymbolNode.ts"
 import {
   GetRequest,
-  PutRequest,
   CreateTextArea,
   CreateInputButton,
-  CreateInputText,
-  CreateAutocompleteInput,
 } from "./../client/util.ts"
 import { Graph, GraphNode, v4 } from "./../client/deps.ts"
 import {
   isNull,
   splitFileName,
-  RangeRandom,
   bufferToHash,
-  orgmodeResourcePath,
-  blobResourcePath,
-  metaResourcePath,
-  todayString,
 } from "./../common/util.ts";
 
-import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
-import { NodeDetail } from "./../editorPage/NodeDetail.ts"
-import { StoredNodes } from "./../client/StoredNodes.ts"
-import { CanvasManager } from "./../client/CanvasManager.ts"
-import { ForceGraphUpdate, NodeToForceNode } from "./../client/ForceGraphSimulation.ts"
-import type { ForceGarphNodeDict, ForceNode } from "./../client/ForceGraphSimulation.ts"
 
 
 export class SingleFileUploader {
