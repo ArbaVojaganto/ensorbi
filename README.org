@@ -78,6 +78,8 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 **** ノードプロパティ更新機能
 **** クエリを発効してネットワークのノードをフィルターできるようにする
 **** VRM読みこみとなんかいい感じに馴染むUIの作成
+ノード詳細は人立たせてメッセージウィンドウっぽくしたり
+
 **** タグ検索
 **** LatestUpdateNodeみたいなノードを組みこんでエントリーポイントノードにつける
 **** EditorApplication.tsをバラす
@@ -85,10 +87,10 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 
 *** viewer
 **** 画像がひっぱってこれているか調査
-**** LocalMenuの必要のないUIを消す
 
 *** build
 **** 公開マーキングしたものだけを含んでviewerプロジェクトを生成できるようにしたい
+**** 公開するとclick to open contentの向き先がおかしいので、きちんとgithubを向くようにする
 
 
 ** LICENSE
