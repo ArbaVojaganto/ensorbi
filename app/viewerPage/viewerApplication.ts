@@ -2,10 +2,8 @@
 import { Node } from "./../models/Node.ts"
 
 import {
-  StoredNodes,
   ScopeGraphManager,
   LocalMenu,
-  NodeDetail,
 } from "./../editorPage/EditorApplication.ts"
 import {
   CanvasManager,
@@ -13,6 +11,9 @@ import {
 import {
   GetRequest,
 } from "./../client/util.ts"
+
+import { StoredNodes } from "./../editorPage/StoredNodes.ts"
+import { NodeDetail } from "./../editorPage/NodeDetail.ts"
 
 import {
   isNull,
