@@ -22,6 +22,7 @@ import { StoredNodes } from "./../client/StoredNodes.ts"
 import { CanvasManager } from "./../client/CanvasManager.ts"
 import { SingleFileUploader } from "./../editorPage/SingleFileUploader.ts"
 
+declare var remoteStorageURL: string;
 
 
 /**
