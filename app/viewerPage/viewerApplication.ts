@@ -20,9 +20,9 @@ import {
   metaResourcePath,
 } from "./../common/util.ts";
 
-
 // index.htmlのインラインスクリプトで定義されているであろうリモートパスのグローバル宣言
 declare var remoteStorageURL: string;
+
 
 const viewerRequestOfRemoteGet = async(
   hash: string,

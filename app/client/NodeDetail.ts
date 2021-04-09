@@ -16,6 +16,9 @@ import {
   metaResourcePath,
 } from "./../common/util.ts";
 
+// index.htmlのインラインスクリプトで定義されているであろうリモートパスのグローバル宣言
+declare var remoteStorageURL: string;
+
 
 export class NodeDetail extends HTMLDivElement {
   private modalOpenElement: HTMLDivElement | undefined
@@ -98,7 +101,7 @@ export class NodeDetail extends HTMLDivElement {
       node.extention == ".gif"
       ) ) {
       const blobPathData = blobResourcePath(node.hash)
-      this.thumbnailElement.src = blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
+      this.thumbnailElement.src = remoteStorageURL + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
       this.thumbnailElement.hidden = false
     } else {
       if (node.thumbnail == "") {
@@ -117,7 +120,7 @@ export class NodeDetail extends HTMLDivElement {
         this.modalWindowElement.removeChild(this.modalWindowElement.firstChild);
       }
       const iframe = document.createElement("iframe")
-      iframe.src = orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
+      iframe.src = remoteStorageURL + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
       this.modalWindowElement.appendChild(iframe)
     }
 
@@ -245,7 +248,7 @@ export class EditableNodeDetail extends NodeDetail {
     if (this.remoteOpenOrgElement) {
       // 子要素を掃除
       removeAllChild(this.remoteOpenOrgElement)
-      const xdgOpenOrgPath = "remote-xdg-like-open/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
+      const xdgOpenOrgPath = remoteStorageURL + "remote-xdg-like-open/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
       const elems = PathElement( "org", "/" + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention, xdgOpenOrgPath)
       elems.forEach( e => { if (this.remoteOpenOrgElement) { this.remoteOpenOrgElement.appendChild(e)} })
     }
@@ -255,7 +258,7 @@ export class EditableNodeDetail extends NodeDetail {
       if (BlobMeta.validation(node) ) {
         removeAllChild(this.remoteOpenBlobElement)
         const blobPathData = blobResourcePath(node.hash)
-        const xdgOpenBlobPath = "remote-xdg-like-open/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
+        const xdgOpenBlobPath = remoteStorageURL + "remote-xdg-like-open/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
         const elems = PathElement("blob", "/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention, xdgOpenBlobPath)
         elems.forEach( e => { if (this.remoteOpenBlobElement) { this.remoteOpenBlobElement.appendChild(e)} })
         this.remoteOpenBlobElement.hidden = false
@@ -267,7 +270,7 @@ export class EditableNodeDetail extends NodeDetail {
     if (this.remoteOpenMetaElement) {
       removeAllChild(this.remoteOpenMetaElement)
       const metaPathData = metaResourcePath(node.hash)
-      const xdgOpenMetaPath = "remote-xdg-like-open/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention
+      const xdgOpenMetaPath = remoteStorageURL + "remote-xdg-like-open/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention
       const elems = PathElement("json", "/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention, xdgOpenMetaPath)
       elems.forEach( e => { if (this.remoteOpenMetaElement) { this.remoteOpenMetaElement.appendChild(e)} })
     }
