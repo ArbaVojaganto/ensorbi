@@ -17,17 +17,17 @@ import {
 } from "./../common/util.ts";
 
 
-export class ReadOnlyNodeDetail extends HTMLDivElement {
+export class NodeDetail extends HTMLDivElement {
   private modalOpenElement: HTMLDivElement | undefined
   private modalWindowElement: HTMLElement | undefined
-  private currentNode: Node | undefined
+  protected currentNode: Node | undefined
   private titleElement: HTMLParagraphElement | undefined
   private descriptionElement: HTMLParagraphElement | undefined
   private thumbnailElement: HTMLImageElement | undefined
   private properties: HTMLUListElement | undefined
   private tags: HTMLUListElement | undefined
   constructor (
-    private fetchNode: (uri: string) => Promise<Node | undefined>,
+    protected fetchNode: (uri: string) => Promise<Node | undefined>,
   ) {
     super()
     this.classList.add("node-detail")
@@ -175,96 +175,41 @@ export class ReadOnlyNodeDetail extends HTMLDivElement {
 
 
 
-
-
-
-
-
-
-
-
-
-
 /**
- * CustomElement
+ * プロパティ編集機能を持ったノード詳細エレメント
  */
-export class EditableNodeDetail extends HTMLDivElement {
-  private modalOpenElement: HTMLDivElement | undefined
-  private modalWindowElement: HTMLElement | undefined
-  private remoteOpenOrgElement: HTMLDivElement | undefined
-  private remoteOpenBlobElement: HTMLDivElement | undefined
-  private remoteOpenMetaElement: HTMLDivElement | undefined
-  private currentNode: Node | undefined
+export class EditableNodeDetail extends NodeDetail {
+  private remoteOpenOrgElement: HTMLDivElement = document.createElement('div')
+  private remoteOpenBlobElement: HTMLDivElement = document.createElement('div')
+  private remoteOpenMetaElement: HTMLDivElement = document.createElement('div')
+  private jsonTextAreaElement: HTMLTextAreaElement = document.createElement('textarea')
+  private tagSelectorElement: HTMLInputElement = document.createElement('input')
+  private tagInserterButtonElement: HTMLButtonElement = document.createElement('button')
+  private tagListElement: HTMLUListElement = document.createElement('ul')
   constructor(
-    private titleElement: HTMLParagraphElement,
-    private descriptionElement: HTMLParagraphElement,
-    private remoteLinkElement: HTMLAnchorElement,
-    private jsonTextAreaElement: HTMLTextAreaElement,
-    private thumbnailElement: HTMLImageElement,
-    private tagSelectorElement: HTMLInputElement,
-    private tagInserterButtonElement: HTMLButtonElement,
-    private tagListElement: HTMLUListElement,
+    fetchNode: (uri: string) => Promise<Node | undefined>,
     private tagHashDict: () => NodeDictionary,
-    private fetchNode: (uri: string) => Promise<Node | undefined>,
     private updateNode: (node: Node, optionFormData: FormData) => Promise<Node[]>,
     private reload: () => void,
   ) {
-    super()
-    this.classList.add("node-detail")
-
-
-    this.thumbnailElement.classList.add("thumbnail")
-    this.thumbnailElement.hidden = true
-    this.appendChild(this.thumbnailElement)
-
-    this.titleElement.innerText = "title"
-    this.appendChild(this.titleElement)
-
-    this.descriptionElement.innerText = "description"
-    this.appendChild(this.descriptionElement)
-
-    this.remoteLinkElement.href = "remoteLink"
-    this.appendChild(this.remoteLinkElement)
-
-
-
-    // モーダルウィンドウテスト
-    const modal = document.getElementById('modal')
-    const mask = document.getElementById('mask')
-    this.modalOpenElement = document.createElement("div")
-
-    if (modal != null && mask != null && !isNull(this.modalOpenElement) ) {
-      this.modalOpenElement.id = "open"
-      this.modalOpenElement.innerText = "click"
-      this.modalOpenElement.onclick = () => {
-          modal.classList.remove('hidden')
-          mask.classList.remove('hidden')
-      }
-      mask.onclick = () => {
-          modal.classList.add('hidden')
-          mask.classList.add('hidden')
-      }
-      this.appendChild(this.modalOpenElement)
-      this.modalWindowElement = modal
-    }
-
-    this.remoteOpenOrgElement = document.createElement("div")
+    super (fetchNode)
     this.remoteOpenOrgElement.innerText = "xdgOpenOrg"
     this.appendChild(this.remoteOpenOrgElement)
 
-    this.remoteOpenBlobElement = document.createElement("div")
     this.remoteOpenBlobElement.innerText = "xdgOpenBlob"
     this.appendChild(this.remoteOpenBlobElement)
 
-    this.remoteOpenMetaElement = document.createElement("div")
     this.remoteOpenMetaElement.innerText = "xdgOpenMeta"
     this.appendChild(this.remoteOpenMetaElement)
 
     this.appendChild(this.tagListElement)
 
+    const tagDict: NodeDictionary = tagHashDict()
+    const datalist = Object.values(tagDict).map(e => e.title)
+    this.tagSelectorElement = CreateAutocompleteInput(document, "li-tag-datalist", datalist)
 
-    // タグセレクタ
     this.appendChild(this.tagSelectorElement)
+    this.tagInserterButtonElement.textContent = 'tag insert'
     this.tagInserterButtonElement.onclick = this.insertTag
     this.appendChild(this.tagInserterButtonElement)
 
@@ -286,79 +231,16 @@ export class EditableNodeDetail extends HTMLDivElement {
     }
   }
 
-  reloadDetail = async () => { 
-    if ( this.currentNode ) {
-      const remoteLatestNode = await this.fetchNode(this.currentNode.hash)
-      if ( !isNull(remoteLatestNode)){
-        this.setDetail( remoteLatestNode )
-      }
-    }
-  }
-
   /**
    * 指定ノードでDOMを更新する
    * @param node 
    */
   public setDetail(node: Node) {
-    this.titleElement.innerText = node.title.substring(0,10)
-    this.descriptionElement.innerText = node.description
+    super.setDetail(node)
 
     const orgPathData = orgmodeResourcePath(node.hash)
     this.jsonTextAreaElement.value = JSON.stringify(node)
 
-    if (BlobMeta.validation(node) && (
-      node.extention == ".jpeg" ||
-      node.extention == ".png" ||
-      node.extention == ".jpg" ||
-      node.extention == ".gif"
-      ) ) {
-      const blobPathData = blobResourcePath(node.hash)
-      this.thumbnailElement.src = blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
-      this.thumbnailElement.hidden = false
-    } else {
-      if (node.thumbnail == "") {
-        this.thumbnailElement.hidden = true
-      } else {
-        this.thumbnailElement.src = node.thumbnail
-        this.thumbnailElement.hidden = false
-      }
-    }
-
-
-    // モーダルウィンドウを開いた時にiframeを生成する
-    if (this.modalWindowElement) {
-      // モーダルウィンドウ内を掃除
-      while (this.modalWindowElement.firstChild) {
-        this.modalWindowElement.removeChild(this.modalWindowElement.firstChild);
-      }
-      const iframe = document.createElement("iframe")
-      iframe.src = orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
-      this.modalWindowElement.appendChild(iframe)
-    }
-
-
-    /**
-     * - div
-     *  - name
-     *  - copyButton
-     *  - openButton
-     */
-    const PathElement = (name: string, copyString: string, onClickRequestPath: string): HTMLElement[] => {        
-      const elems:  HTMLElement[] = []
-      //const text = document.createElement("p")
-      //text.innerText = name + ": "
-      //elems.push(text)
-      const copy = document.createElement("button")
-      copy.onclick = () => { textToClipBoard(document, copyString) }
-      copy.innerText = `${name}: pathToClipboard`
-
-      elems.push(copy)
-      const request = document.createElement("button")
-      request.onclick = () => { GetRequest(onClickRequestPath)}
-      request.innerText = `${name}: remoteXdgOpen`
-      elems.push(request)
-      return elems
-    }
 
     if (this.remoteOpenOrgElement) {
       // 子要素を掃除
@@ -390,31 +272,8 @@ export class EditableNodeDetail extends HTMLDivElement {
       elems.forEach( e => { if (this.remoteOpenMetaElement) { this.remoteOpenMetaElement.appendChild(e)} })
     }
 
-    // タグリストを生成する
-    while (this.tagListElement.firstChild) {
-      this.tagListElement.removeChild(this.tagListElement.firstChild);
-    }
-
-    const ul = this.tagListElement
-
-    // 登録し直し
-    Object.entries(node.vector).forEach( async([target, label]) => {
-      // 非同期に実行されても大丈夫なはずなのでとりあえずawaitなし
-      const node = await this.fetchNode(target)
-      if (node) {
-        const li = document.createElement('li')
-        li.innerText = node.title
-        ul.appendChild(li)
-      }
-    })
-    //ul.appendChild(nodeToRecursiveUList(document, node))
-    ul.appendChild(objToRecurisveAccordionMenu(document, node))
-
-
     this.reloadTagSelectorDataList()
 
-    // インスタンスを持たせておく
-    this.currentNode = node
   }
 
   /**
@@ -424,9 +283,7 @@ export class EditableNodeDetail extends HTMLDivElement {
     // タグセレクタを再生成する
     const tagDict: NodeDictionary = this.tagHashDict()
     const datalist = Object.values(tagDict).map(e => e.title)
-    const tagSelector = CreateAutocompleteInput(document, "li-tag-datalist", datalist)
-    //// 再生成したノードで古いノードを置きかえる
-    //this.replaceChild(tagSelector, this.tagSelectorElement)
+
     const dl = document.getElementById("li-tag-datalist")
     if (!isNull(dl)) {
       while (dl.firstChild) {
@@ -439,7 +296,6 @@ export class EditableNodeDetail extends HTMLDivElement {
       })
     }
   }
-
 }
 
 
@@ -478,36 +334,6 @@ const objToRecurisveAccordionMenu = (document: HTMLDocument, obj: NonNullable<an
   return root
 }
 
-const objToRecursiveUList  = (document: HTMLDocument, obj: any): HTMLUListElement => {
-  const ul = document.createElement('ul')
-
-  Object.entries(obj).forEach(([key, value]) => {
-    const li = document.createElement('li')
-    li.innerText = key.substring(0,10) + ": "
-
-    if (typeof value == 'object') {
-      const objElement = objToRecursiveUList(document, value)
-      li.appendChild(objElement)
-
-    } else if (typeof value == 'string' || typeof value == 'number') {
-      const child = document.createElement('input')
-      child.value = value.toString()
-      li.appendChild(child)
-    }
-    ul.appendChild(li)
-  })
-
-  return ul
-}
-
-/**
- * nodeを再帰的なUList構造に変換する
- * @param document 
- * @param node 
- */
-const nodeToRecursiveUList  = (document: HTMLDocument, node: Node): HTMLUListElement => {
-  return objToRecursiveUList(document, node)
-}
 
 /**
  * 子要素を全て削除する
@@ -538,3 +364,26 @@ const textToClipBoard = (document: HTMLDocument, text : string): Boolean => {
   document.body.removeChild(tempElement)
   return success;
 }
+
+
+/**
+ * - div
+ *  - name
+ *  - copyButton
+ *  - openButton
+ */
+const PathElement = (name: string, copyString: string, onClickRequestPath: string): HTMLElement[] => {        
+  const elems:  HTMLElement[] = []
+  const copy = document.createElement("button")
+  copy.onclick = () => { textToClipBoard(document, copyString) }
+  copy.innerText = `${name}: pathToClipboard`
+
+  elems.push(copy)
+  const request = document.createElement("button")
+  request.onclick = () => { GetRequest(onClickRequestPath)}
+  request.innerText = `${name}: remoteXdgOpen`
+  elems.push(request)
+  return elems
+}
+
+

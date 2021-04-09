@@ -264,24 +264,11 @@ export class LocalMenu extends HTMLDivElement {
     super()
     this.id = "network-graph-local-menu"
 
-    const tagDict: NodeDictionary = tagHashDict()
-    const datalist = Object.values(tagDict).map(e => e.title)
-    const tagSelector = CreateAutocompleteInput(document, "li-tag-datalist", datalist)
 
-    // タグ追加ボタン
-    const tagAdder = CreateInputButton(document, "tagInsert", () => {})
 
     this.detail = new EditableNodeDetail(
-      document.createElement('p'),
-      document.createElement('p'),
-      document.createElement('a'),
-      document.createElement('textarea'),
-      document.createElement('img'),
-      tagSelector,
-      tagAdder,
-      document.createElement('ul'),
-      tagHashDict,
       fetchNode,
+      tagHashDict,
       updateNode,
       reload,
     )

@@ -10,7 +10,7 @@ import {
 } from "./../client/util.ts"
 
 import { StoredNodes } from "./../client/StoredNodes.ts"
-import { ReadOnlyNodeDetail } from "./../client/NodeDetail.ts"
+import { NodeDetail } from "./../client/NodeDetail.ts"
 import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
 
 import {
@@ -95,7 +95,7 @@ export class ViewerApplication {
     )
 
     customElements.define('localmenu-div', LocalMenu, {extends: 'div'})
-    customElements.define('node-detail-div', ReadOnlyNodeDetail, {extends: 'div'})
+    customElements.define('node-detail-div', NodeDetail, {extends: 'div'})
   }
 
   reload = async () => {
@@ -143,7 +143,7 @@ export class ViewerApplication {
  *  /NodeDetail
  */
 export class LocalMenu extends HTMLDivElement {
-  detail: ReadOnlyNodeDetail | undefined
+  detail: NodeDetail | undefined
   constructor(
     tagHashDict: () => NodeDictionary,
     private fetchNode: (uri: string) => Promise<Node | undefined>,
@@ -153,7 +153,7 @@ export class LocalMenu extends HTMLDivElement {
     super()
     this.id = "network-graph-local-menu"
 
-    this.detail = new ReadOnlyNodeDetail (
+    this.detail = new NodeDetail (
       this.fetchNode
     )
 
