@@ -16,6 +16,8 @@ import {
   metaResourcePath,
 } from "./../common/util.ts";
 
+import { orgParser } from "./../client/deps.ts"
+
 // index.htmlのインラインスクリプトで定義されているであろうリモートパスのグローバル宣言
 declare var remoteStorageURL: string;
 
@@ -83,7 +85,7 @@ export class NodeDetail extends HTMLDivElement {
    * 指定ノードでDOMを更新する
    * @param node 
    */
-  public setDetail(node: Node) {
+  public async setDetail(node: Node) {
     if (
       isNull(this.titleElement) ||
       isNull(this.thumbnailElement) ||
@@ -119,9 +121,16 @@ export class NodeDetail extends HTMLDivElement {
       while (this.modalWindowElement.firstChild) {
         this.modalWindowElement.removeChild(this.modalWindowElement.firstChild);
       }
-      const iframe = document.createElement("iframe")
-      iframe.src = remoteStorageURL + orgPathData.prefix + orgPathData.hashDir + orgPathData.hash + orgPathData.extention
-      this.modalWindowElement.appendChild(iframe)
+      const orgText = await remoteOrgGet(node.hash)
+      const html = org2Html(orgText)
+
+      // htmlっぽいのものとして解釈できた時だけモーダルウィンドウに追加
+      if ( html != "") {
+        const blob = new Blob([html.contentHTML], { type: 'text/html' })
+        const iframe = document.createElement("iframe")
+        iframe.src = URL.createObjectURL(blob);
+        this.modalWindowElement.appendChild(iframe)
+      }
     }
 
     // プロパティUIを作成する
@@ -216,7 +225,7 @@ export class EditableNodeDetail extends NodeDetail {
     this.tagInserterButtonElement.onclick = this.insertTag
     this.appendChild(this.tagInserterButtonElement)
 
-    this.jsonTextAreaElement.value = "json"
+    this.jsonTextAreaElement.value = "text"
     this.appendChild(this.jsonTextAreaElement)
   }
 
@@ -238,8 +247,8 @@ export class EditableNodeDetail extends NodeDetail {
    * 指定ノードでDOMを更新する
    * @param node 
    */
-  public setDetail(node: Node) {
-    super.setDetail(node)
+  public async setDetail(node: Node) {
+    await super.setDetail(node)
 
     const orgPathData = orgmodeResourcePath(node.hash)
     this.jsonTextAreaElement.value = JSON.stringify(node)
@@ -259,7 +268,7 @@ export class EditableNodeDetail extends NodeDetail {
         removeAllChild(this.remoteOpenBlobElement)
         const blobPathData = blobResourcePath(node.hash)
         const xdgOpenBlobPath = remoteStorageURL + "remote-xdg-like-open/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention
-        const elems = PathElement("blob", "/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention, xdgOpenBlobPath)
+        const elems = PathElement("text", "/" + blobPathData.prefix + blobPathData.hashDir + blobPathData.hash + node.extention, xdgOpenBlobPath)
         elems.forEach( e => { if (this.remoteOpenBlobElement) { this.remoteOpenBlobElement.appendChild(e)} })
         this.remoteOpenBlobElement.hidden = false
       } else {
@@ -271,7 +280,7 @@ export class EditableNodeDetail extends NodeDetail {
       removeAllChild(this.remoteOpenMetaElement)
       const metaPathData = metaResourcePath(node.hash)
       const xdgOpenMetaPath = remoteStorageURL + "remote-xdg-like-open/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention
-      const elems = PathElement("json", "/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention, xdgOpenMetaPath)
+      const elems = PathElement("text", "/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention, xdgOpenMetaPath)
       elems.forEach( e => { if (this.remoteOpenMetaElement) { this.remoteOpenMetaElement.appendChild(e)} })
     }
 
@@ -390,3 +399,28 @@ const PathElement = (name: string, copyString: string, onClickRequestPath: strin
 }
 
 
+
+const remoteOrgGet = async(
+  hash: string,
+  force = false,
+): Promise<string> =>  {
+  const pathStruct = orgmodeResourcePath(hash)
+  const path = remoteStorageURL + pathStruct.prefix + pathStruct.hashDir + pathStruct.hash + pathStruct.extention
+  const response = await GetRequest(path);
+  if (isNull(response)) return ""
+  const text = await response.text()
+
+  if (isNull(text)) {
+    console.warn("Textとして解釈できないものを取得しました")
+    return ""
+  } else {
+    console.log(`remoteOrgGet: ${text}`)
+    return text
+  }
+}
+
+const org2Html = (orgText: string) => {
+    const orgDocument = new orgParser.Parser().parse(orgText)
+    const html = orgDocument.convert(orgParser.ConverterHTML, {});
+    return html
+}
