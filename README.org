@@ -83,6 +83,7 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 *** abstractを書く
 
 *** グラフ描画
+**** canvasに書いてるのでsvgにおきかえてみる
 **** ノードの種類によって見た目を区別できるようにする
 **** グラフ内のノード変更時にグラフの描画が止まってしまう問題の解消
 ちょっとずつネットワークに追加されていく様が反映されて欲しい
