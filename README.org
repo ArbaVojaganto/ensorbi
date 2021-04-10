@@ -1,9 +1,7 @@
 * ensorbi
 ensorbi is a mechanism to absorb your experience.
 
-Alternatively, it is an application 
-
-that manages static files, text files and tags as a network based on their reference relationships.
+Alternatively, it is an application that manages static files, text files and tags as a network based on their reference relationships.
 
 ensorbiはあなたの経験を吸収する仕組みです。
 
@@ -51,7 +49,7 @@ $ deno run -A --unstable ./app/server/main.ts --reconstruct-referrers
 #+END_SRC
 
 *** viewer client deploy to "Deno Deploy"
-1. setup
+**** setup
 #+BEGIN_SRC
 $ cd ${RepositoryRoot}
 $ deno bundle --unstable --config tsconfig.json ./app/viewerPage/index.ts ./app/viewerPage/index.bundle.js
@@ -64,21 +62,21 @@ $ vim ./build/viewer/index.html
   </script>
 #+END_SRC
 
-2. bundle
+**** bundle
 #+BEGIN_SRC
 $ deno run -A --unstable ./app/server/main.ts --build-deno-deploy-project
 #+END_SRC
 
-3. gitpush
+**** gitpush
 Under =${RepositoryRoot}/build/viewer/=, the files required for the Git repository that works with =Deno Deploy= are generated.
 
 push to any GitHub repository.
 
 
-4. register entrypoint of Deno Deploy
+**** register entrypoint of Deno Deploy
 link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${branch-name}/main.ts"
 
-5. access
+**** access
 
 
 ** todo
