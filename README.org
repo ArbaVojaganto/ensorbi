@@ -38,7 +38,7 @@ $ deno bundle --unstable --config tsconfig.json ./app/editorPage/index.ts ./app/
 
 *** bundle viewer client script
 #+BEGIN_SRC
-$ deno bundle --unstable --config tsconfig.json ./app/editorPage/index.ts ./app/editorPage/index.bundle.js
+$ deno bundle --unstable --config tsconfig.json ./app/viewerPage/index.ts ./app/viewerPage/index.bundle.js
 #+END_SRC
 
 
@@ -50,10 +50,11 @@ $ deno bundle --unstable --config tsconfig.json ./app/editorPage/index.ts ./app/
 $ deno run -A --unstable ./app/server/main.ts --reconstruct-referrers
 #+END_SRC
 
-*** viewer deploy to "Deno Deploy"
+*** viewer client deploy to "Deno Deploy"
 1. setup
 #+BEGIN_SRC
 $ cd ${RepositoryRoot}
+$ deno bundle --unstable --config tsconfig.json ./app/viewerPage/index.ts ./app/viewerPage/index.bundle.js
 $ deno run -A --unstable ./app/server/main.ts --build-deno-deploy-project
 $ vim ./build/viewer/index.html
 
@@ -69,6 +70,10 @@ $ deno run -A --unstable ./app/server/main.ts --build-deno-deploy-project
 #+END_SRC
 
 3. gitpush
+Under =${RepositoryRoot}/build/viewer/=, the files required for the Git repository that works with =Deno Deploy= are generated.
+
+push to any GitHub repository.
+
 
 4. register entrypoint of Deno Deploy
 link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${branch-name}/main.ts"
