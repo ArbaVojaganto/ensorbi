@@ -1,6 +1,14 @@
 * ensorbi
 ensorbi is a mechanism to absorb your experience.
 
+Alternatively, it is an application 
+
+that manages static files, text files and tags as a network based on their reference relationships.
+
+ensorbiはあなたの経験を吸収する仕組みです。
+
+あるいは、静的ファイル、テキストファイル及びタグをそれらの参照関係によるネットワークとして管理するアプリケーションです。
+
 [[./doc/ensorbi-demo-4.gif]]
 [[https://arba-vojaganto.deno.dev][demo]]
 
@@ -97,7 +105,9 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 
 ** LICENSE
 Each code and file is provided under a license written in "LICENSE", unless it is licensed on its own.  
+
 Contributors need to agree that their contributions are subject to the licenses mentioned above.
 
 各コードとファイルはそれ自体にライセンス表記がない限り、"LICENSE"で記述されたライセンスの元で提供されます。  
+
 また、貢献者はその貢献が上述のライセンスに従うことに同意する必要があります。
