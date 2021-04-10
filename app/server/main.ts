@@ -4,7 +4,7 @@ import { routes } from "./router.ts"
 import { posts, StoredPosts, registerTagMeta } from "./StoredPosts.ts"
 import { TagMeta } from "./../models/tags.ts"
 import { bufferToHash } from "./../common/util.ts"
-import { buildDenoDeployProject } from "./../viewerPage/viewerBundle.ts"
+import { buildDenoDeployProject } from "./viewerBundle.ts"
 
 
 const startHttpServer = async () => {

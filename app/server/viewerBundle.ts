@@ -4,6 +4,8 @@ import {
   CopyOptions,
 } from "https://deno.land/std/fs/mod.ts"
 
+import { base64 } from "./../server/deps.ts"
+
 
 const updateStorage = async(path: string) => {
   const opt: CopyOptions = { overwrite: true }
@@ -45,11 +47,18 @@ addEventListener("fetch", (event: any) => {
     `
 
   // ビルド出力ディレクトリでmain.tsのバンドルを開始する
+
+  // jsファイルをdatauriに変換
   const script = await Deno.readTextFile(path + "index.bundle.js")
+  const uint8arr = new TextEncoder().encode(script)
+  const b64 = base64.fromUint8Array(uint8arr)
+  const dataUri = `data:text/plain;base64,${b64}`
+
   const baseHtml = await Deno.readTextFile(path + "index.html")
-  let body = baseHtml.replace('<script src="index.bundle.js"></script>', '<script>\n' + script + '\n</script>')
+  let body = baseHtml.replace('<script src="index.bundle.js"></script>', `<script src="${dataUri}"></script>`)
   body = body.replaceAll('\`', '\\\`')
   body = body.replaceAll('\$', '\\\$')
+
 
   const html = header + body + hooter
   
