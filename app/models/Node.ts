@@ -74,3 +74,13 @@ export abstract class Node {
     return true
   };
 }
+
+  /**
+   * 指定ノードの参照と被参照をまとめたうえで自分へのリンクを抜いたリストを取得する。
+   * @param target 
+   */
+  export const GetNodeEdges = (target: Node): [string, NodeEdge][] => {
+    const ret = {...target.vector, ...target.referers}
+    delete ret[target.hash]
+    return Object.entries(ret)
+  }
