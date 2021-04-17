@@ -2,7 +2,7 @@
 /// <reference lib="dom" />
 
 import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../models/Node.ts"
-import { Node } from "./../models/Node.ts"
+import { Node, GetNodeEdges } from "./../models/Node.ts"
 import { BlobMeta} from "./../models/BlobMeta.ts"
 import { TagMeta } from "./../models/tags.ts"
 import { SymbolNode } from "./../models/SymbolNode.ts"
@@ -58,6 +58,7 @@ const createAccordionMenu = (menuLabel: string, childs: HTMLElement[]) => {
 export class GlobalMenu {
   private fileUploader: SingleFileUploader | undefined
   private tagDict: NodeDictionary = {}
+  private tagSeacher: TagNodeSeachArea | undefined
   constructor(
     private document: HTMLDocument,
     private rootNode: HTMLElement,
@@ -117,21 +118,24 @@ export class GlobalMenu {
 
     const toAllScope = document.createElement("button")
     toAllScope.onclick = () => {
-      this.scopeManager?.restart(bufferToHash("node"))
+      //this.scopeManager?.restart(bufferToHash("node"))
+      this.restartScopeManager(bufferToHash("node"))
     }
     toAllScope.innerText = `toAllScope`
     rootNode.appendChild(toAllScope)
 
     const toTagScope = document.createElement('button')
     toTagScope.onclick = () => {
-      this.scopeManager?.restart(bufferToHash("tag"))
+      //this.scopeManager?.restart(bufferToHash("tag"))
+      this.restartScopeManager(bufferToHash("tag"))
     }
     toTagScope.innerText = `toTagScope`
     rootNode.appendChild(toTagScope)
 
     const toBlobScope = document.createElement('button')
     toBlobScope.onclick = () => { 
-      this.scopeManager?.restart(bufferToHash("blob"))
+      //this.scopeManager?.restart(bufferToHash("blob"))
+      this.restartScopeManager(bufferToHash("blob"))
     }
     toBlobScope.innerText = `toBlobScope`
     rootNode.appendChild(toBlobScope)
@@ -140,13 +144,18 @@ export class GlobalMenu {
     toTodayScope.onclick = () => { 
       const s = todayString()
       if (s) {
-        this.scopeManager?.restart(bufferToHash(s))
+        //this.scopeManager?.restart(bufferToHash(s))
+        this.restartScopeManager(bufferToHash(s))
       }
     }
     toTodayScope.innerText = `toTodayScope`
     rootNode.appendChild(toTodayScope)
 
+    this.tagSeacher = new TagNodeSeachArea(tagHashDict, this.restartScopeManager)
+    rootNode.appendChild(this.tagSeacher)
+    
 
+    
 
     //const test = {
     //  first : "1",
@@ -160,6 +169,23 @@ export class GlobalMenu {
     ////rootNode.appendChild(nodeToRecursiveUList(document, test))
     //const a = objToRecurisveAccordionMenu (document, test)
     //rootNode.appendChild(a)
+  }
+
+
+  restartScopeManager = (hash: string) => {
+    this.scopeManager?.restart(bufferToHash(hash))
+    this.reloadUI()
+  }
+
+
+  reloadUI = () => {
+    // TAGノードサーチャー再読み込み
+    this.tagSeacher?.reload()
+
+    // Tag生成エリア再読み込み
+    this.tagDict = this.tagHashDict()
+    const datalist = Object.values(this.tagDict).map(e => e.title)
+    this.updateTagDatalist(datalist)
   }
 
   /**
@@ -181,6 +207,7 @@ export class GlobalMenu {
   }
 
 
+
   addTagRequest = async (e: any) => {
     if (this.tagNameInput.value == "") return
 
@@ -192,9 +219,9 @@ export class GlobalMenu {
     // 空ならリクエスト失敗としてなにもしない
     if (resultNodes.length == 0) { return }
     this.reload()
-    this.tagDict = this.tagHashDict()
-    const datalist = Object.values(this.tagDict).map(e => e.title)
-    this.updateTagDatalist(datalist)
+    //this.tagDict = this.tagHashDict()
+    //const datalist = Object.values(this.tagDict).map(e => e.title)
+    //this.updateTagDatalist(datalist)
   }
 
   public static init = (
@@ -233,6 +260,48 @@ export class GlobalMenu {
     )
     return i
   }
+}
+
+class TagNodeSeachArea extends HTMLDivElement {
+  private tagText = CreateAutocompleteInput(document, "tag-names", [])
+  private jumpButton = CreateInputButton(document, "open scope")
+  constructor(
+    private tagDict: () => NodeDictionary,
+    private restartScopeManager: (hash: string) => void
+  ) {
+    super()
+    const datalist = Object.values(tagDict()).map(e => e.title)
+    this.updateTagDatalist(datalist)
+
+    this.jumpButton.onclick = this.clickCallback
+    this.appendChild(this.tagText)
+    this.appendChild(this.jumpButton)
+  }
+
+  reload = () => {
+    const datalist = Object.values(this.tagDict()).map(e => e.title)
+    this.updateTagDatalist(datalist)
+  }
+
+  updateTagDatalist = (datalist: string[]) => {
+    const dl = this.tagText.firstChild
+    if (isNull(dl)) return
+
+    while (dl.firstChild) {
+      dl.removeChild(dl.firstChild);
+    }
+    datalist.forEach( e=> {
+      const option = document.createElement('option')
+      option.value = e
+      dl.appendChild(option)
+    })
+  }
+
+  clickCallback = () => {
+    const hash = this.tagText.value
+    this.restartScopeManager(hash)
+  }
+
 }
 
 
@@ -310,16 +379,30 @@ export class EditorApplication {
     this.canvasManager = new CanvasManager( this.document, this.containerNode)
   }
 
-  init = ()=> {
+  init = async()=> {
+    customElements.define('localmenu-div', LocalMenu, {extends: 'div'})
+    customElements.define('node-detail-div', EditableNodeDetail, {extends: 'div'})
+    customElements.define('tag-node-seacher-div', TagNodeSeachArea, {extends: 'div'})
+
     if (isNull(this.canvasManager) || isNull(this.canvasManager.graphCanvas)) return 
     this.canvasManager.init()
-    //const node = bufferToHash("node")
-    //const tag = bufferToHash("tag")
-    //const blob = bufferToHash("blob")
+    const node = bufferToHash("node")
+    const tag = bufferToHash("tag")
+    const blob = bufferToHash("blob")
     const entryPoint = bufferToHash("entryPoint")
+
+    // 一先ずtagだけ先に全部取得する
+    const tagNode = await this.store.fetch(tag)
+    if (!isNull(tagNode)) {
+      const links = GetNodeEdges(tagNode)
+      for await (const [hash, edge] of links) {
+        const a = await this.store.fetch(hash)
+      }
+    }
 
     // initialノード
     const n = entryPoint
+
 
       // グラフマネージャーを初期化する
     this.scopeGraphHistory.dependancyModuleInjection(this.canvasManager, this.store, this.activateNode)
@@ -338,8 +421,6 @@ export class EditorApplication {
       this.scopeGraphHistory
     )
 
-    customElements.define('localmenu-div', LocalMenu, {extends: 'div'})
-    customElements.define('node-detail-div', EditableNodeDetail, {extends: 'div'})
 
   }
 
@@ -351,6 +432,7 @@ export class EditorApplication {
     if (!isNull(this.localMenu)) {
       this.localMenu.reloadDetail()
     }
+    this.globalMenu?.reloadUI()
   }
 
   activateNode = (node: Node) => {
@@ -388,6 +470,5 @@ export class EditorApplication {
     requestAnimationFrame(this.update);
   }
 }
-
 
 

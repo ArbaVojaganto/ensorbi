@@ -1,7 +1,7 @@
 * ensorbi
 ensorbi is a mechanism to absorb your experience.
 
-*This Application is unstable*
+*THIS APPLICATION IS UNSTABLE!*
 
 Alternatively, it is an application that manages static files, text files and tags as a network based on their reference relationships.
 

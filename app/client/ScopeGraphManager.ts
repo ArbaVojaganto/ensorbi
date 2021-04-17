@@ -1,6 +1,6 @@
 
 import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../models/Node.ts"
-import { Node } from "./../models/Node.ts"
+import { Node, GetNodeEdges } from "./../models/Node.ts"
 import { Graph, GraphNode, v4 } from "./../client/deps.ts"
 import {
   isNull,
@@ -137,15 +137,6 @@ class SingleNodeTargetScopeGraph {
     }
   }
 
-  /**
-   * 指定ノードの参照と被参照をまとめたうえで自分へのリンクを抜いたリストを取得する。
-   * @param n 
-   */
-  public edges = (n: Node): [string, Edge][] => {
-    const ret = {...n.vector, ...n.referers}
-    delete ret[n.hash]
-    return Object.entries(ret)
-  }
 
   /**
    * このクラス内で発生したイベントの登録等を開放する
@@ -163,7 +154,6 @@ class SingleNodeTargetScopeGraph {
    * コンストラクタで入力された情報から初期化
    */
   public reset = async () => {
-    const links = this.edges(this.target)//Object.entries(this.target.vector).concat(Object.entries(this.target.referers))
     const tempNodeDict: ForceGarphNodeDict = {}
 
     if (this.target.hash != "545ea538461003efdc8c81c244531b003f6f26cfccf6c0073b3239fdedf49446") {
@@ -172,7 +162,9 @@ class SingleNodeTargetScopeGraph {
       criteria.movable = false
       tempNodeDict[this.target.hash] = criteria
     }
+
     // とりあえず一周分のノードを取得
+    const links = GetNodeEdges(this.target)
     for await (const [hash, edge] of links) {
       const a = await this.fetchNode(hash)
 
