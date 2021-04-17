@@ -13,5 +13,6 @@ export {
     createRouter,
     contentTypeFilter,
     parserMultipartRequest,
-} from "https://servestjs.org/@v1.1.9/mod.ts"
-export type { ServerRequest } from "https://servestjs.org/@v1.1.9/mod.ts"
+} from "https://deno.land/x/servest@v1.3.1/mod.ts"
+export type { ServerRequest } from "https://deno.land/x/servest@v1.3.1/mod.ts"
+
