@@ -118,7 +118,6 @@ export class GlobalMenu {
 
     const toAllScope = document.createElement("button")
     toAllScope.onclick = () => {
-      //this.scopeManager?.restart(bufferToHash("node"))
       this.restartScopeManager(bufferToHash("node"))
     }
     toAllScope.innerText = `toAllScope`
@@ -126,7 +125,6 @@ export class GlobalMenu {
 
     const toTagScope = document.createElement('button')
     toTagScope.onclick = () => {
-      //this.scopeManager?.restart(bufferToHash("tag"))
       this.restartScopeManager(bufferToHash("tag"))
     }
     toTagScope.innerText = `toTagScope`
@@ -134,7 +132,6 @@ export class GlobalMenu {
 
     const toBlobScope = document.createElement('button')
     toBlobScope.onclick = () => { 
-      //this.scopeManager?.restart(bufferToHash("blob"))
       this.restartScopeManager(bufferToHash("blob"))
     }
     toBlobScope.innerText = `toBlobScope`
@@ -144,7 +141,6 @@ export class GlobalMenu {
     toTodayScope.onclick = () => { 
       const s = todayString()
       if (s) {
-        //this.scopeManager?.restart(bufferToHash(s))
         this.restartScopeManager(bufferToHash(s))
       }
     }
@@ -173,7 +169,7 @@ export class GlobalMenu {
 
 
   restartScopeManager = (hash: string) => {
-    this.scopeManager?.restart(bufferToHash(hash))
+    this.scopeManager?.restart(hash)
     this.reloadUI()
   }
 
@@ -390,6 +386,7 @@ export class EditorApplication {
     const tag = bufferToHash("tag")
     const blob = bufferToHash("blob")
     const entryPoint = bufferToHash("entryPoint")
+    const today = bufferToHash("2021-04-17")
 
     // 一先ずtagだけ先に全部取得する
     const tagNode = await this.store.fetch(tag)
