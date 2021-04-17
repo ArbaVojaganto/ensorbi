@@ -294,7 +294,7 @@ class TagNodeSeachArea extends HTMLDivElement {
   }
 
   clickCallback = () => {
-    const hash = this.tagText.value
+    const hash = bufferToHash(this.tagText.value)
     this.restartScopeManager(hash)
   }
 
