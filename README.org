@@ -1,7 +1,7 @@
 * ensorbi
 ensorbi is a mechanism to absorb your experience.
 
-**This Application is unstable**
+*This Application is unstable*
 
 Alternatively, it is an application that manages static files, text files and tags as a network based on their reference relationships.
 
@@ -100,6 +100,9 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 
 **** タグ検索
 **** LatestUpdateNodeみたいなノードを組みこんでエントリーポイントノードにつける
+**** イベント駆動に変える
+デリゲートをやりとりするのをやめる
+anyをやりとりしている気がするので、きちんと型を送る
 
 *** viewer
 **** 画像がひっぱってこれているか調査
