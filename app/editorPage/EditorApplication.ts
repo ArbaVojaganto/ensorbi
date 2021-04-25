@@ -21,6 +21,7 @@ import { EditableNodeDetail } from "./../client/NodeDetail.ts"
 import { StoredNodes } from "./../client/StoredNodes.ts"
 import { CanvasManager } from "./../client/CanvasManager.ts"
 import { SingleFileUploader } from "./../editorPage/SingleFileUploader.ts"
+import { EventDispatcher } from "../client/EventDispatcher.ts"
 
 declare var remoteStorageURL: string;
 
@@ -359,6 +360,7 @@ export class LocalMenu extends HTMLDivElement {
 
 
 export class EditorApplication {
+  private sceneEventManager = new EventDispatcher()
   store: StoredNodes = new  StoredNodes()
   scopeGraphHistory = new ScopeGraphManager()
   globalMenu: GlobalMenu | undefined

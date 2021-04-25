@@ -103,6 +103,13 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 **** イベント駆動に変える
 デリゲートをやりとりするのをやめる
 anyをやりとりしている気がするので、きちんと型を送る
+ビュー全体に影響を与えるためにグローバルキューを作る
+***** sendInterface
+emit(Message)
+Message
+  type: EventType as const
+  value: {}
+
 
 *** viewer
 **** 画像がひっぱってこれているか調査

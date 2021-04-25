@@ -1,9 +1,13 @@
 
 
-type Listner = { oneShot: Boolean, callback: any }
 
 // 既存のイベントオブジェクトをそのままディスパッチしたかったのでとりあえずEventオブジェクトはなんでも受けいれるように...
-//export type Event = { type: string, propety: NonNullable<any> }
+
+export type Event = { type: string }
+export type EventCallback = (event: Event) => void
+type Listner = { oneShot: Boolean, callback: EventCallback }
+
+
 
 /**
  * 簡易的なイベントシステム
@@ -24,7 +28,7 @@ export class EventDispatcher {
      * @param callback 
      * @param options 
      */
-    addEventListner(eventType: string, callback: any, options:{ oneShot?: boolean} = {}) {
+    addEventListner(eventType: string, callback: EventCallback, options:{ oneShot?: boolean} = {}) {
         const listner: Listner = {
             oneShot: !!options.oneShot,
             callback: callback,
@@ -33,14 +37,16 @@ export class EventDispatcher {
         this.getListeners(eventType).push(listner)
     }
 
+
+
     /**
      * 指定イベントタイプの指定コールバックをリスナーから削除する
      * @param eventType 
      * @param callback 
      */
-    removeEventListner(eventType: string, callback: any) {
+    removeEventListner(eventType: string, callback: EventCallback) {
         const listnerList = this.getListeners(eventType)
-        const index = listnerList.findIndex((listner) => { listner === callback })
+        const index = listnerList.findIndex((listner) => { listner.callback === callback })
         if (index >= 0) {
             listnerList.splice(index, 1)
         }
@@ -57,7 +63,7 @@ export class EventDispatcher {
      * イベントを発火させる
      * @param event 
      */
-    dispatchEvent(event: any) {
+    dispatchEvent(event: Event) {
         const listnerList = this.getListeners(event.type)
         listnerList.forEach(e => {
             e.callback(event)

@@ -5,11 +5,18 @@ import {
   GetRequest,
   PutRequest,
 } from "./../client/util.ts"
-import { Graph, GraphNode, v4 } from "./../client/deps.ts"
 import {
   isNull,
   metaResourcePath,
 } from "./../common/util.ts";
+
+
+export type EventType = "StoredNodes-Update"
+
+export type UpdateEvent = {
+  type: "StoredNodes-Update",
+  Node: Node,
+}
 
 
 

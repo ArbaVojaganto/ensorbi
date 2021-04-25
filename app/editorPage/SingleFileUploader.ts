@@ -9,7 +9,7 @@ import {
   CreateTextArea,
   CreateInputButton,
 } from "./../client/util.ts"
-import { Graph, GraphNode, v4 } from "./../client/deps.ts"
+import {  v4 } from "./../client/deps.ts"
 import {
   isNull,
   splitFileName,
