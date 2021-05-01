@@ -4,6 +4,7 @@
 
 import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../models/Node.ts"
 import { Node } from "./../models/Node.ts"
+import { TagMeta } from "./../models/tags.ts"
 import { BlobMeta} from "./../models/BlobMeta.ts"
 import {
   GetRequest,
@@ -173,20 +174,6 @@ export class NodeDetail extends HTMLDivElement {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * プロパティ編集機能を持ったノード詳細エレメント
  */
@@ -196,7 +183,7 @@ export class EditableNodeDetail extends NodeDetail {
   private remoteOpenMetaElement: HTMLDivElement = document.createElement('div')
   private jsonTextAreaElement: HTMLTextAreaElement = document.createElement('textarea')
   private tagSelectorElement: HTMLInputElement = document.createElement('input')
-  private tagInserterButtonElement: HTMLButtonElement = document.createElement('button')
+  private tagInsertOrGenerateButtonElement: HTMLButtonElement = document.createElement('button')
   private tagListElement: HTMLUListElement = document.createElement('ul')
   constructor(
     fetchNode: (uri: string) => Promise<Node | undefined>,
@@ -221,17 +208,38 @@ export class EditableNodeDetail extends NodeDetail {
     this.tagSelectorElement = CreateAutocompleteInput(document, "li-tag-datalist", datalist)
 
     this.appendChild(this.tagSelectorElement)
-    this.tagInserterButtonElement.textContent = 'tag insert'
-    this.tagInserterButtonElement.onclick = this.insertTag
-    this.appendChild(this.tagInserterButtonElement)
+    this.tagInsertOrGenerateButtonElement.textContent = 'tag insert'
+    this.tagInsertOrGenerateButtonElement.onclick = this.insertOrGenerateTag
+    this.appendChild(this.tagInsertOrGenerateButtonElement)
 
     this.jsonTextAreaElement.value = "text"
     this.appendChild(this.jsonTextAreaElement)
   }
 
-  insertTag = async () => {
+
+  insertOrGenerateTag = async () => {
     const node = JSON.parse(this.jsonTextAreaElement.value)
-    const tag = this.tagHashDict()[this.tagSelectorElement.value]
+    let tag = this.tagHashDict()[this.tagSelectorElement.value]
+    if (isNull(tag)) {
+      // タグがなければ生成する
+      const generateTag = new TagMeta("",this.tagSelectorElement.value, "","", "", {}, "")
+      const formData = new FormData();
+      formData.set("meta", JSON.stringify(generateTag));
+      const resultNodes = await this.updateNode(generateTag, formData)
+
+      console.log(`Tag:${this.tagSelectorElement.value} is not found. So Generate.`)
+      // 空ならリクエスト失敗として処理を中断させる
+      if (resultNodes.length == 0) { return }
+
+      tag = this.tagHashDict()[this.tagSelectorElement.value]
+    }
+
+    if (isNull(tag)) {
+      console.warn(`Tag:${this.tagSelectorElement.value} is not found. And Generate Failed...`)
+      return
+    }
+    
+
     if ( Node.validation(node)) {
       const index = tag.hash
       node.vector[index] = node.vector[index] ?? {}
