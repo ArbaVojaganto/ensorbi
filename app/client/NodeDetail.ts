@@ -208,7 +208,7 @@ export class EditableNodeDetail extends NodeDetail {
     this.tagSelectorElement = CreateAutocompleteInput(document, "li-tag-datalist", datalist)
 
     this.appendChild(this.tagSelectorElement)
-    this.tagInsertOrGenerateButtonElement.textContent = 'tag insert'
+    this.tagInsertOrGenerateButtonElement.textContent = 'tag insert or generate'
     this.tagInsertOrGenerateButtonElement.onclick = this.insertOrGenerateTag
     this.appendChild(this.tagInsertOrGenerateButtonElement)
 
