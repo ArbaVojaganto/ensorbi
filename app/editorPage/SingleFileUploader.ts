@@ -9,7 +9,7 @@ import {
   CreateTextArea,
   CreateInputButton,
 } from "./../client/util.ts"
-import { Graph, GraphNode, v4 } from "./../client/deps.ts"
+import { v4 } from "./../client/deps.ts"
 import {
   isNull,
   splitFileName,
@@ -29,7 +29,8 @@ export class SingleFileUploader {
     private document: HTMLDocument,
     private parentNode: HTMLElement,
     private updateNode: (e: Node, optionFormData: FormData) => Promise<Node[]>,
-    private reload: () => void
+    private reload: () => void,
+    private restartScopeManager: (hash: string) => void
   ) {
     // ルートノードを親に登録
     this.baseElement = document.createElement("div")
@@ -233,8 +234,11 @@ export class SingleFileUploader {
     formData.set("file", this.fileArea.files[0]); // ファイル内容を詰める
 
     const result = await this.updateNode(node, formData)
-    if (result.length) {
-      this.reload()
+    // ブラウザ上でバイナリからハッシュだすのと、
+    // サーバー側でバイナリからハッシュ出すのでずれてしまうので、とりあえずサーバー側を正にしている
+    if (result.length && result[0]) {
+      this.restartScopeManager(result[0].hash)
+      //this.reload()
       return result
     } else {
       return undefined

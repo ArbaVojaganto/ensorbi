@@ -1,7 +1,7 @@
 
 export * as base64 from "https://denopkg.com/chiefbiiko/base64/mod.ts";
 export { resize } from "https://deno.land/x/deno_image/mod.ts";
-export { ensureDir } from 'https://deno.land/std/fs/mod.ts'
+export { ensureDir, ensureDirSync } from 'https://deno.land/std/fs/mod.ts'
 
 
 

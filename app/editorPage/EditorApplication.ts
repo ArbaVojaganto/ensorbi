@@ -107,7 +107,7 @@ export class GlobalMenu {
     rootNode.appendChild(createSymbolNodeRequsetUI())
 
 
-    this.fileUploader = new SingleFileUploader(document,rootNode, updateNode, reload)
+    this.fileUploader = new SingleFileUploader(document,rootNode, updateNode, reload, this.restartScopeManager)
     if (this.fileUploader.baseElement) {
       const menu = createAccordionMenu("singleFileUploader: ", [this.fileUploader.baseElement])
       rootNode.appendChild(menu)
