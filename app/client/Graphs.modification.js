@@ -750,8 +750,8 @@ export class Graph {
   update() {
     //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     let nodes = Object.values(this.objs);
-    nodes.map(node => node.update());
     this.drawEdges();
+    nodes.map(node => node.update());
     if (this.connecting) {
       let yflipper = 1;
       let xflipper = 1;
@@ -860,6 +860,8 @@ export class Graph {
     //this.canvas.addEventListener("mouseup", end_dragging.bind(this));
     this.drag_start = start_dragging.bind(this)
     this.drag_end = end_dragging.bind(this)
+
+    // インターフェイスに描画処理を登録し、外から叩いてもらう
     this.draw = mainloop.bind(this);
     //mainloop();
   }
@@ -1279,6 +1281,8 @@ export class Node {
     } else {
       context.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
     }
+    context.ctx.fillStyle = "rgba(255,255,255,1.0)" ;
+    context.ctx.fill() ;
     context.ctx.closePath();
     context.ctx.stroke();
 

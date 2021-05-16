@@ -205,6 +205,10 @@ class SingleNodeTargetScopeGraph {
    * レンダリングされたグラフでノードに対して干渉があった時のイベント
    */
   private activateNodeCallback = async ( deactivateNode: GraphNode | null | undefined, activateNode: GraphNode ) => {
+    // activateNodeといいつつ、ハッシュをわりあてていないエッジからの情報も来る可能性があるので弾く、
+    if ( isNull(activateNode.hash) ) {
+      return
+    }
     const node = await this.fetchNode(activateNode.hash)
     if (node) {
       this.onNodeSelectedOfView(node)
