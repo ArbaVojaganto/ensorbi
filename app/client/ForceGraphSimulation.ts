@@ -27,7 +27,7 @@ export type ForceGarphNodeDict = {
 export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, width: number): ForceGarphNodeDict => {
   const BOUNCE = 0.05
   const COULOMB = 600
-  const ATTENUATION = 0.7
+  const ATTENUATION = 0.3
 
 
   // 全てのノードを列挙
