@@ -9,6 +9,7 @@ import { BlobMeta} from "./../models/BlobMeta.ts"
 import {
   GetRequest,
   CreateAutocompleteInput,
+  removeAllChild,
 } from "./../client/util.ts"
 import {
   isNull,
@@ -355,15 +356,6 @@ const objToRecurisveAccordionMenu = (document: HTMLDocument, obj: NonNullable<an
 }
 
 
-/**
- * 子要素を全て削除する
- * @param target 
- */
-const removeAllChild = (target: Element) => {
-  while (target.firstChild) {
-    target.removeChild(target.firstChild);
-  }
-}
 
 
 /**

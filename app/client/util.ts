@@ -164,3 +164,14 @@ export const CreateAutocompleteInput = (document: HTMLDocument, dataListId: stri
     input.appendChild(dl)
     return input
 }
+
+
+/**
+ * 子要素を全て削除する
+ * @param target 
+ */
+export const removeAllChild = (target: Element) => {
+  while (target.firstChild) {
+    target.removeChild(target.firstChild);
+  }
+}

@@ -20,7 +20,7 @@ import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
 import { EditableNodeDetail } from "./../client/NodeDetail.ts"
 import { StoredNodes } from "./../client/StoredNodes.ts"
 import { CanvasManager } from "./../client/CanvasManager.ts"
-import { SingleFileUploader } from "./../editorPage/SingleFileUploader.ts"
+import { SingleFileUploader, MultiFileUploader, SingleBlobUploader } from "./../editorPage/SingleFileUploader.ts"
 
 declare var remoteStorageURL: string;
 
@@ -57,6 +57,7 @@ const createAccordionMenu = (menuLabel: string, childs: HTMLElement[]) => {
 
 export class GlobalMenu {
   private fileUploader: SingleFileUploader | undefined
+  private multifileUploader: MultiFileUploader | undefined
   private tagDict: NodeDictionary = {}
   private tagSeacher: TagNodeSeachArea | undefined
   constructor(
@@ -110,6 +111,11 @@ export class GlobalMenu {
     this.fileUploader = new SingleFileUploader(document,rootNode, updateNode, reload, this.restartScopeManager)
     if (this.fileUploader.baseElement) {
       const menu = createAccordionMenu("singleFileUploader: ", [this.fileUploader.baseElement])
+      rootNode.appendChild(menu)
+    }
+    this.multifileUploader = new MultiFileUploader(updateNode, reload, this.tagHashDict)
+    if ( !isNull(this.multifileUploader)) {
+      const menu = createAccordionMenu("multiFileUploader: ", [this.multifileUploader])
       rootNode.appendChild(menu)
     }
 
@@ -379,6 +385,8 @@ export class EditorApplication {
     customElements.define('localmenu-div', LocalMenu, {extends: 'div'})
     customElements.define('node-detail-div', EditableNodeDetail, {extends: 'div'})
     customElements.define('tag-node-seacher-div', TagNodeSeachArea, {extends: 'div'})
+    customElements.define('multi-file-uploader', MultiFileUploader, {extends: 'div'})
+    customElements.define('single-blob-uploader', SingleBlobUploader, {extends: 'li'})
 
     if (isNull(this.canvasManager) || isNull(this.canvasManager.graphCanvas)) return 
     this.canvasManager.init()
