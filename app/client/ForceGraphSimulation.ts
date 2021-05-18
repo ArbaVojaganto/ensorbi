@@ -24,10 +24,11 @@ export type ForceGarphNodeDict = {
  * 引数の値はimmutableに扱う
  * 返り値をまたすぐこの関数にそのままぶちこめるように、差分ではなく差分適応後の座標をリンク情報つきでかえす
  */
-export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, width: number): ForceGarphNodeDict => {
+export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, width: number): {nodes: ForceGarphNodeDict, entropy: number} => {
   const BOUNCE = 0.05
   const COULOMB = 600
   const ATTENUATION = 0.3
+  let entropy = 0
 
 
   // 全てのノードを列挙
@@ -81,6 +82,7 @@ export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, widt
         // 減衰速度を計算する
         vx = (target.vx + fx) * ATTENUATION
         vy = (target.vy + fy) * ATTENUATION
+        entropy = ((vx+vy)/2) ** 2
       }
 
       // canvasの端を考慮して移動量を反射させる
@@ -105,7 +107,7 @@ export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, widt
   })
 
   // 更新を適応したあたらしいグラフインスタンスを生成する
-  return Object.fromEntries(ret)
+  return {nodes: Object.fromEntries(ret), entropy: entropy}
 }
 
 /**

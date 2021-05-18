@@ -99,3 +99,6 @@ export const todayString = () => {
 
 
 //export class GlueMeta extends Node {}
+
+
+export const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);

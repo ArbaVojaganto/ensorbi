@@ -5,6 +5,7 @@ import { Graph, GraphNode, v4 } from "./../client/deps.ts"
 import {
   isNull,
   RangeRandom,
+  clamp
 } from "./../common/util.ts";
 
 import { StoredNodes } from "./../client/StoredNodes.ts"
@@ -107,7 +108,9 @@ class SingleNodeTargetScopeGraph {
   private graphNodes: {[hash: string]: GraphNode} = {}
   private nodes: ForceGarphNodeDict = {}
   private graph: Graph | undefined
-  private graphId: number = -1
+  private graphId = -1
+  private nextUpdateLine = 1
+  private currentEntropy = 1
   // グラフの構築中か
   private isRebuilding: boolean = false
   // 前回のグラフ計算が終わっていなければアップデートを飛ばすためのフラグ
@@ -238,7 +241,13 @@ class SingleNodeTargetScopeGraph {
       return
     }
     this.updataing = true
-    this.ToStableGraph()
+
+    this.nextUpdateLine += clamp(this.currentEntropy, 0.1, 1)
+    if (1<=this.nextUpdateLine) {
+      this.currentEntropy = (this.currentEntropy + this.ToStableGraph())/2
+      this.nextUpdateLine = 0
+    }
+
     this.updataing = false
   }
 
@@ -262,12 +271,17 @@ class SingleNodeTargetScopeGraph {
       this.nodes[hash].y = graphNode.y
     })
     // 計算
-    this.nodes = ForceGraphUpdate(this.nodes, this.canvasManager.height(), this.canvasManager.width())
+    const result = ForceGraphUpdate(this.nodes, this.canvasManager.height(), this.canvasManager.width())
+    this.nodes = result.nodes
+
+    console.log(`entropy is ${result.entropy}`)
     // 描画ノードに反映させる
     Object.entries(this.nodes).forEach( ([hash, node]) => {
       this.graphNodes[hash].x = node.x
       this.graphNodes[hash].y = node.y
     })
+
+    return result.entropy
   }
 
 
