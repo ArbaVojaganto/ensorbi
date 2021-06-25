@@ -1,4 +1,8 @@
 {
+    "server":  {
+        "port": 8090,
+        "hostname": "localhost"
+    },
     "storagePrefixPath": "storage",
     "storageBlobPath": "blob",
     "storageMetaPath": "meta",

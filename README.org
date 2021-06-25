@@ -84,6 +84,12 @@ link of "https://raw.githubusercontent.com/${user-name}/${Repository-name}/${bra
 ** todo
 *** abstractを書く
 
+
+*** 対話型ビュー
+****
+グラフとはいつでもきりかえれるように
+LINQを扱うような使いごこちでインタラクティブに絞りこんでいく
+
 *** グラフ描画
 **** canvasに書いてるのでsvgにおきかえてみる
 **** ノードの種類によって見た目を区別できるようにする
@@ -112,7 +118,6 @@ anyをやりとりしている気がするので、きちんと型を送る
 
 *** build
 **** 公開マーキングしたものだけを含んでviewerプロジェクトを生成できるようにしたい
-**** 公開するとclick to open contentの向き先がおかしいので、きちんとgithubを向くようにする
 
 
 ** LICENSE

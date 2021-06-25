@@ -5,6 +5,7 @@ import { posts, StoredPosts, registerTagMeta } from "./StoredPosts.ts"
 import { TagMeta } from "./../models/tags.ts"
 import { bufferToHash } from "./../common/util.ts"
 import { buildDenoDeployProject } from "./viewerBundle.ts"
+import { serverConfig } from "./ConfigLoader.ts";
 
 
 const startHttpServer = async () => {
@@ -16,7 +17,7 @@ const startHttpServer = async () => {
     if ( await posts.fetch(bufferToHash("entryPoint"))  == undefined ) await registerTagMeta( new TagMeta("", "entryPoint", "", "", "", {}, ""))
 
     app.route("/", routes());
-    app.listen({ port: 8080 });
+    app.listen({ port: serverConfig.port, hostname: serverConfig.hostname });
 }
 
 const reconstructReferrers = async () => {
