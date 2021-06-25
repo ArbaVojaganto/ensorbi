@@ -414,7 +414,7 @@ const remoteOrgGet = async(
     console.warn("Textとして解釈できないものを取得しました")
     return ""
   } else {
-    console.log(`remoteOrgGet: ${text}`)
+    //console.log(`remoteOrgGet: ${text}`)
     return text
   }
 }

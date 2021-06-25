@@ -361,10 +361,18 @@ export class MultiFileUploader extends HTMLDivElement {
 
   sendCallback = () => {
     const enumrable = Range(0, this.DataList.children.length - 1).map((i: any) => this.DataList.children[i])
+    const hash = ""
     enumrable.forEach((e: any) => {
       e.registerBlobMeta(this.DataList)
     })
     this.reload()
+    //if (result.length && result[0]) {
+    //  this.restartScopeManager(result[0].hash)
+    //  //this.reload()
+    //  return result
+    //} else {
+    //  return undefined
+    //}
   }
 
   insertOrGenerateTag = async () => {
@@ -393,6 +401,7 @@ export class MultiFileUploader extends HTMLDivElement {
     enumrable.forEach((e: any) => {
       e.tagInsert(tag)
     })
+    this.tagSelectorElement.value = ""
     this.reload()
 
   }
