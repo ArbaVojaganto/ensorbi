@@ -81,6 +81,10 @@ export const hashToRemoteResourcePath = (hash: string) => {
   return `${relHashPath(hash, 3)}/`
 }
 
+export const markdownResourcePath = (hash: string) => {
+  return { prefix: "storage/md/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".md" }
+}
+
 export const orgmodeResourcePath = (hash: string) => {
   return { prefix: "storage/org/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".org" }
 }
