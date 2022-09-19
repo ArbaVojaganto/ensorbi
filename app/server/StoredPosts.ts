@@ -154,6 +154,13 @@ export class StoredPosts {
             if (hash == todayHash) {
               await registerTagMeta( new TagMeta(todayHash, today, today, "", "", {}, ""))
               node = await this.load(hash)
+              if (isNull(node)) {
+                console.log("今日のノードが作成できなかった")
+                console.log(`to: ${hash}`)
+                console.log(`today: ${todayHash}`)
+              }else {
+                modificationNodes[node.hash] = node
+              }
 
             } else {
               console.log("ハッシュが今日のハッシュと一致しない...")
