@@ -1,5 +1,6 @@
 /storage/**/*
 /storage.bak/**/*
+/storage.publicsite-backup/**/*
 
 index.bundle.js
 

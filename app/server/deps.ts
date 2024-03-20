@@ -14,5 +14,5 @@ export {
     contentTypeFilter,
     parserMultipartRequest,
 } from "https://deno.land/x/servest@v1.3.1/mod.ts"
-export type { ServerRequest } from "https://deno.land/x/servest@v1.3.1/mod.ts"
+export type { ServerRequest } from "https://deno.land/x/servest@v1.3.4/mod.ts"
 
