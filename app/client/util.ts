@@ -1,26 +1,31 @@
-
 /// <reference lib="dom" />
-
 
 /**
  * ここでは中身をキャストせずレスポンスをそのまま戻り値とする
- * @param uri 
- * @param query 
+ * @param uri
+ * @param query
  */
-export const GetRequest = async (uri: string, query = ""): Promise<undefined|Response> => {
-  console.log(`HTTP REQUEST GET:${uri}${query}`)
+export const GetRequest = async (
+  uri: string,
+  query = "",
+): Promise<undefined | Response> => {
+  console.log(`HTTP REQUEST GET:${uri}${query}`);
   //APIからJSONデータを取得する
   return await fetch(uri + query)
     .then((response) => {
-      return response
+      return response;
     })
     .catch((e) => {
       console.log(e); //エラーをキャッチし表示
-      return undefined
+      return undefined;
     });
 };
 
-export const PostRequest = async (uri: string, body: string, files: FileList) => {
+export const PostRequest = async (
+  uri: string,
+  body: string,
+  files: FileList,
+) => {
   // とりあえず先頭だけ...
   const file = files[0];
 
@@ -61,9 +66,8 @@ export const DeleteRequest = async (uri: string) => {
 };
 
 export const PutRequest = async (uri: string, formData: FormData) => {
-
   //// 送信データの準備
-  console.log({...formData.getAll})
+  console.log({ ...formData.getAll });
   const param = {
     method: "PUT",
     body: formData,
@@ -72,11 +76,11 @@ export const PutRequest = async (uri: string, formData: FormData) => {
   //APIからJSONデータを取得する
   return await fetch(uri, param)
     .then((response) => {
-      return response
+      return response;
     })
     .catch((e) => {
       console.log(e); //エラーをキャッチし表示
-      return undefined
+      return undefined;
     });
 };
 
@@ -127,7 +131,7 @@ export const CreateInputButton = (
 ): HTMLButtonElement => {
   let button = document.createElement("button");
   //button.type = "button";
-  button.innerText = value
+  button.innerText = value;
   button.value = value;
   button.onclick = callback;
   return button;
@@ -148,30 +152,34 @@ export const CreateImg = (
   return img;
 };
 
-export const CreateAutocompleteInput = (document: HTMLDocument, dataListId: string, dataList: string[] = [], value: string = "") => {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = value;
-    input.setAttribute('list', dataListId);
-    input.autocomplete = "true"
-    let dl = document.createElement('datalist')
-    dl.id = dataListId
-    dataList.forEach( e=> {
-      let option = document.createElement('option')
-      option.value = e
-      dl.appendChild(option)
-    })
-    input.appendChild(dl)
-    return input
-}
-
+export const CreateAutocompleteInput = (
+  document: HTMLDocument,
+  dataListId: string,
+  dataList: string[] = [],
+  value: string = "",
+) => {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = value;
+  input.setAttribute("list", dataListId);
+  input.autocomplete = "true";
+  let dl = document.createElement("datalist");
+  dl.id = dataListId;
+  dataList.forEach((e) => {
+    let option = document.createElement("option");
+    option.value = e;
+    dl.appendChild(option);
+  });
+  input.appendChild(dl);
+  return input;
+};
 
 /**
  * 子要素を全て削除する
- * @param target 
+ * @param target
  */
 export const removeAllChild = (target: Element) => {
   while (target.firstChild) {
     target.removeChild(target.firstChild);
   }
-}
+};
