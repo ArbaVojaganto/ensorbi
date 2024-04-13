@@ -420,7 +420,8 @@ const remoteOrgGet = async(
 }
 
 const org2Html = (orgText: string) => {
-    const orgDocument = new orgParser.Parser().parse(orgText)
-    const html = orgDocument.convert(orgParser.ConverterHTML, {});
+    const parser = new orgParser.default.Parser()
+    const orgDocument = parser.parse(orgText)
+    const html = orgDocument.convert(orgParser.default.ConverterHTML, {});
     return html
 }
