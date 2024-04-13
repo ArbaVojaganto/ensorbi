@@ -1,6 +1,7 @@
-import { Sha256 } from "./deps.ts";
-import type { Message } from "./deps.ts"
 import { NodeEdge } from "../models/Node.ts";
+import { createHash } from "https://deno.land/std@0.110.0/node/crypto.ts";
+
+import { is } from "https://deno.land/x/unknownutil@v3.17.0/mod.ts";
 
 
 /**
@@ -43,12 +44,24 @@ export const splitFileName = (filepath: string): { name: string, extention: stri
  * @param hashable 
  */
 export const bufferToHash = (
-  hashable: string | number[] | ArrayBuffer,
+  hashable: string | ArrayBuffer,
 ): string => {
-  const message: Message = hashable;
-  const sha256: Sha256 = new Sha256();
-  sha256.update(message);
-  return sha256.hex();
+  // エンコードを指定しているのでdigestの返り値は必ずstringになる
+  // @todo できればbufferで返したいが...
+  return createHash("sha256").update(hashable).digest("hex") as string;
+  //if ( typeof (hashable) == "string") {
+  //  const messageBuffer = new TextEncoder().encode(hashable);
+  //  const hashBuffer = await crypto.subtle.digest("SHA-256", messageBuffer);
+  //  const hash = encodeHex(hashBuffer);
+  //  return hash
+  //} else if (Array.isArray(hashable)) {
+  //  throw("bufferToHash(hashable: number[])は未実装です")
+  //  //return "";
+  //} else {
+  //  const hashBuffer = await crypto.subtle.digest("SHA-256", hashable);
+  //  const hash = encodeHex(hashBuffer);
+  //  return hash
+  //}
 };
 
 export const relHashPath = (hash: string, num: number): string => {
@@ -101,5 +114,22 @@ export const todayString = () => {
   return new RegExp("^[0-9]+-[0-9]+-[0-9]+").exec(new Date().toISOString())?.[0]
 }
 
+/**
+ * T | T[] からTを取得する
+ * @param arrayOrSingle 
+ * @returns single
+ */
+export const getSingleOrArrayFirst = <T>(arrayOrSingle: T | T[]): T => {
+  if ( is.Array(arrayOrSingle) ) {
+    if ( 1 <= arrayOrSingle.length ) {
+      const single = arrayOrSingle[0]
+      return single
+    } else {
+        throw("getSingleOrArrayFirst: 配列の中身が0です")
+    }
+  } else {
+    return arrayOrSingle
+  }
+}
 
 //export class GlueMeta extends Node {}
