@@ -2,6 +2,7 @@
 /// <reference lib="dom" />
 
 // 参考: https://qiita.com/PG0721/items/92d54c9f2a57ec9109b8
+//  参考元は著作権放棄済み
 
 
 import {
@@ -129,8 +130,8 @@ export class CanvasManager extends EventDispatcher {
     this.graphCanvas.style.height = window.innerHeight + 'px'
 
     // 描画バッファ
-    this.graphCanvas.width = Math.floor(window.innerWidth * window.devicePixelRatio)
-    this.graphCanvas.height = Math.floor(window.innerHeight * window.devicePixelRatio)
+    this.graphCanvas.width = Math.floor(window.innerWidth )
+    this.graphCanvas.height = Math.floor(window.innerHeight)
 
 
     this.graphCanvas.id = "network-graph-canvas"
@@ -319,8 +320,8 @@ export class CanvasManager extends EventDispatcher {
     this._vp = {
       x: 0,
       y: 0,
-      w: window.innerWidth * window.devicePixelRatio,
-      h: window.innerHeight * window.devicePixelRatio
+      w: window.innerWidth ,
+      h: window.innerHeight
     }
   }
 
