@@ -31,13 +31,19 @@ export const xdgLikeOpen = (uri: string) => {
       //throw(new Exception())
   } else if ( os === 'windows') {
       command = 'cmd'
-      cliArguments.push('/s', '/c', 'start', '', '/b');
+      cliArguments.push(
+        '/s', '/c', 
+        'start', '', 
+        '/b',
+      )
   
   } else {
       // macosでもwindowsでもなければとりあえずunixosだと判断する
   }
 
-  cliArguments.push(uri);
+  // ディレクトリをstartコマンドで開く場合、フルパス指定する必要があるのでしょうがなくつける
+  const pwd = Deno.cwd()
+  cliArguments.push(`${pwd}/${uri}`);
 
   const runOptions: Deno.RunOptions = {
     cmd: [command, ...cliArguments],

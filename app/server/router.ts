@@ -5,10 +5,11 @@ import {
   deletePost,
   updatePost,
 } from "./../controllers/postsController.ts"
+import { ensureFile} from "https://deno.land/std@0.222.1/fs/mod.ts";
 
 import { Hono, Context} from 'https://deno.land/x/hono/mod.ts'
 import { serveStatic } from 'https://deno.land/x/hono/middleware.ts'
-import { isNull, splitFileName } from "./../common/util.ts"
+import { isNull } from "./../common/util.ts"
 import { xdgLikeOpen } from "./util.ts"
 
 
@@ -52,7 +53,32 @@ const FallbackResponse = (c: Context): Response => {
 export const RemoteOpenFile = async (c: Context) => {
   console.log(`RemoteOpenFile Request( ${c.req.method}:${c.req.url} )`)
 
-  const filePath = `storage/${c.req.param("type")}/${c.req.param("first")}/${c.req.param("second")}/${c.req.param("third")}/${c.req.param("file")}`
+  let filePath = `storage/${c.req.param("type")}/${c.req.param("first")}/${c.req.param("second")}/${c.req.param("third")}/${c.req.param("file")}`
+
+  switch (c.req.param("type"))
+  {
+    case "org": {break;}
+    case "meta": {break;}
+    case "blob": {break;}
+    case "project":
+      {
+        // 対象のフォルダがなければ作ってしまう
+	      	try {
+	       		await Deno.stat(filePath);   
+	       	} catch (e) {
+            // 対象のパスになにも存在しない時はとりあえず中間dir+index.mdを作る
+            await ensureFile(`${filePath}/index.md`)
+	       	}
+          // 直接対応するindex.mdを開くために、末尾に追加する
+          filePath = filePath+"/index.md"
+        break;
+      }
+    default:
+      {
+        console.log(`想定外のtype:${c.req.param("type")}がリクエストされています`)
+        break;
+      }
+  }
 
   const localPath = filePath
   xdgLikeOpen(localPath)

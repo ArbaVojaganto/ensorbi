@@ -6,6 +6,7 @@ import type { NodeEdge as Edge, EdgeDict, NodeDictionary, NodeType } from "./../
 import { Node } from "./../models/Node.ts"
 import { TagMeta } from "./../models/tags.ts"
 import { BlobMeta} from "./../models/BlobMeta.ts"
+import { SymbolNode } from "./../models/SymbolNode.ts"
 import {
   GetRequest,
   CreateAutocompleteInput,
@@ -16,6 +17,7 @@ import {
   orgmodeResourcePath,
   blobResourcePath,
   metaResourcePath,
+  projectResourcePath,
 } from "./../common/util.ts";
 
 import { orgParser } from "./../client/deps.ts"
@@ -180,6 +182,7 @@ export class NodeDetail extends HTMLDivElement {
  */
 export class EditableNodeDetail extends NodeDetail {
   private remoteOpenOrgElement: HTMLDivElement = document.createElement('div')
+  private remoteOpenProjectElement: HTMLDivElement = document.createElement('div')
   private remoteOpenBlobElement: HTMLDivElement = document.createElement('div')
   private remoteOpenMetaElement: HTMLDivElement = document.createElement('div')
   private jsonTextAreaElement: HTMLTextAreaElement = document.createElement('textarea')
@@ -201,6 +204,9 @@ export class EditableNodeDetail extends NodeDetail {
 
     this.remoteOpenMetaElement.innerText = "xdgOpenMeta"
     this.appendChild(this.remoteOpenMetaElement)
+
+    this.remoteOpenProjectElement.innerText = "xdgOpenProject"
+    this.appendChild(this.remoteOpenProjectElement)
 
     this.appendChild(this.tagListElement)
 
@@ -273,6 +279,7 @@ export class EditableNodeDetail extends NodeDetail {
 
 
     if (this.remoteOpenBlobElement) {
+      // BlobMetaの場合だけ 表示要素を増やす
       if (BlobMeta.validation(node) ) {
         removeAllChild(this.remoteOpenBlobElement)
         const blobPathData = blobResourcePath(node.hash)
@@ -291,6 +298,20 @@ export class EditableNodeDetail extends NodeDetail {
       const xdgOpenMetaPath = remoteStorageURL + "remote-xdg-like-open/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention
       const elems = PathElement("json", "/" + metaPathData.prefix + metaPathData.hashDir + metaPathData.hash + metaPathData.extention, xdgOpenMetaPath)
       elems.forEach( e => { if (this.remoteOpenMetaElement) { this.remoteOpenMetaElement.appendChild(e)} })
+    }
+
+    if (this.remoteOpenProjectElement) {
+      // SymbolNodeの場合だけ 表示要素を増やす
+      if (SymbolNode.validation(node) ) {
+        removeAllChild(this.remoteOpenProjectElement)
+        const projectPathData = projectResourcePath(node.hash)
+        const xdgOpenProjectPath = remoteStorageURL + "remote-xdg-like-open/" + projectPathData.prefix + projectPathData.hashDir + projectPathData.hash
+        const elems = PathElement("project", "/" + projectPathData.prefix + projectPathData.hashDir + projectPathData.hash , xdgOpenProjectPath)
+        elems.forEach( e => { if (this.remoteOpenProjectElement) { this.remoteOpenProjectElement.appendChild(e)} })
+        this.remoteOpenProjectElement.hidden = false
+      } else {
+        this.remoteOpenProjectElement.hidden = true
+      }
     }
 
     this.reloadTagSelectorDataList()
