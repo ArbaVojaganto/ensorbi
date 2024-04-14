@@ -106,6 +106,10 @@ export const blobResourcePath = (hash: string) => {
   return { prefix: "storage/blob/", hashDir: hashToRemoteResourcePath(hash), hash: hash }
 }
 
+export const projectResourcePath = (hash: string) => {
+  return { prefix: "storage/project/", hashDir: hashToRemoteResourcePath(hash), hash: hash }
+}
+
 export const metaResourcePath = (hash: string) => {
   return { prefix: "storage/meta/", hashDir: hashToRemoteResourcePath(hash), hash: hash, extention: ".json" }
 }

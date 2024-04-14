@@ -42,6 +42,10 @@ for await (const arg of Deno.args){
             await startHttpServer()
             break
         }
+        case "--client-prebuild": {
+            await clientPreBuild()
+            break
+        }
         case "--http-server": {
             startHttpServer()
             break
