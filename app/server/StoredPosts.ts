@@ -198,13 +198,19 @@ export class StoredPosts {
     // あったら上書きかな
     this.dict[e.hash] = e;
     await saveMeta(this.dict[e.hash]);
-    return true;
+    return true
   }
 
   public toArray(): Node[] {
     const n = Object.keys(this.dict).map((key) => this.dict[key]);
-    return n;
+    return n
   }
+
+  public toJsonTextArray(): string[]{
+    const jsons = Object.keys(this.dict).map((key) => JSON.stringify(this.dict[key]));
+    return jsons
+  }
+  
 
   public async load(
     hash: string,
@@ -270,7 +276,10 @@ export class StoredPosts {
   filter(evaluater: (e: Node) => {}): Node[] {
     return Object.values(this.dict).filter((e) => evaluater(e));
   }
+
 }
+
+
 
 // DBでの永続化はせずインメモリで管理
 export const posts: StoredPosts = new StoredPosts();

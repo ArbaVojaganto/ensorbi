@@ -152,6 +152,14 @@ export const CreateImg = (
   return img;
 };
 
+/**
+ * 自動補完機能付きHTML Input要素を作成する
+ * @param document 
+ * @param dataListId 
+ * @param dataList 
+ * @param value 
+ * @returns HTML Input要素
+ */
 export const CreateAutocompleteInput = (
   document: HTMLDocument,
   dataListId: string,
@@ -182,4 +190,21 @@ export const removeAllChild = (target: Element) => {
   while (target.firstChild) {
     target.removeChild(target.firstChild);
   }
+};
+
+
+/**
+ * HTML Input要素を作成する
+ * @param document 
+ * @param value 初期値
+ * @returns HTMLInput要素
+ */
+export const CreateInput = (
+  document: HTMLDocument,
+  value: string = "",
+) => {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = value;
+  return input;
 };

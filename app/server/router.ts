@@ -12,6 +12,9 @@ import { serveStatic } from 'https://deno.land/x/hono/middleware.ts'
 import { isNull } from "./../common/util.ts"
 import { xdgLikeOpen } from "./util.ts"
 
+import { posts} from "./StoredPosts.ts";
+
+
 
 export const routes = (app: Hono) => {
   app.get("/", Page)
@@ -29,6 +32,7 @@ export const routes = (app: Hono) => {
   )
   app.delete("/storage/:key", deletePost)
 
+  app.get("/storage/globalsearch/:keyword", GetGlobalSearchRequest)
   app.get("/storage/blob/:first/:second/:third/:file", GetStorageBlobResource)
   app.get("/storage/org/:first/:second/:third/:file", GetStorageOrgResource)
   app.get("/storage/meta/:first/:second/:third/:file", GetStorageMetaResource)
@@ -87,6 +91,36 @@ export const RemoteOpenFile = async (c: Context) => {
     {
       status: 200,
       headers: {
+      }
+    }
+  )
+}
+
+/**
+ * ストレージを全探索する
+ * @param c 
+ */
+export const GetGlobalSearchRequest = async(c: Context) => {
+  console.log(`GetGlobalSearchRequest ( ${c.req.method}:${c.req.url} )`)
+  const searchKeyword = c.req.param("keyword")
+
+  // 一度全て取得する
+  await posts.fetchAll()
+
+  // メタ情報に探索対象が含まれている集合を取得する
+  const searchResult = await posts.toArray().
+    filter(e=> {
+      const json = JSON.stringify(e)
+      return json.indexOf(searchKeyword) != -1
+    })
+
+  return new Response(
+    //new TextDecoder("utf-8").decode(await Deno.readFile(filePath)),
+    JSON.stringify( searchResult),
+    {
+      status: 200,
+      headers: {
+        "content-type": "text/json; charset=UTF-8",
       }
     }
   )

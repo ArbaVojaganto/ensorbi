@@ -9,18 +9,23 @@ import { SymbolNode } from "./../models/SymbolNode.ts"
 import {
   CreateInputButton,
   CreateAutocompleteInput,
+  CreateInput,
 } from "./../client/util.ts"
 import {
   isNull,
   bufferToHash,
   todayString,
 } from "./../common/util.ts";
+import {
+  GetRequest,
+} from "./../client/util.ts"
 
 import { ScopeGraphManager } from "./../client/ScopeGraphManager.ts"
 import { EditableNodeDetail } from "./../client/NodeDetail.ts"
 import { StoredNodes } from "./../client/StoredNodes.ts"
 import { CanvasManager } from "./../client/CanvasManager.ts"
 import { SingleFileUploader, MultiFileUploader, SingleBlobUploader } from "./../editorPage/SingleFileUploader.ts"
+import { failResponse } from "../server/router.ts";
 
 declare var remoteStorageURL: string;
 
@@ -69,9 +74,26 @@ export class GlobalMenu {
     private updateNode: (node: Node, optionFormData: FormData) => Promise<Node[]>,
     private tagHashDict: () => NodeDictionary,
     private scopeManager: ScopeGraphManager,
+    private globalSearchTextInput: HTMLInputElement,
+    private globalSearchRequestButton: HTMLButtonElement,
   ) {
-    rootNode.appendChild(tagNameInput);
-    rootNode.appendChild(requestButton);
+
+    // グローバル検索
+    {
+      const li = document.createElement('li')
+      li.appendChild(globalSearchTextInput)
+      li.appendChild(globalSearchRequestButton)
+      const ulroot = document.createElement('ul')
+      ulroot.appendChild(li)
+      rootNode.appendChild(ulroot)
+
+      globalSearchRequestButton.onclick = this.globalSearchRequest
+    }
+    
+
+    // タグ検索
+    rootNode.appendChild(tagNameInput)
+    rootNode.appendChild(requestButton)
     requestButton.onclick = this.addTagRequest
 
     // タイトル指定してシンボルノードを作成する
@@ -208,7 +230,30 @@ export class GlobalMenu {
     })
   }
 
+  globalSearchRequest = async (e: any) => {
+    if (this.globalSearchTextInput.value == "") return
+    const searchText = this.globalSearchTextInput.value
 
+    // リクエスト送る
+    console.log(`globalSearch Request: "${searchText}"`)
+
+    // リクエストなげる
+    const response = await GetRequest(`/storage/globalsearch/${searchText}`)
+    if (isNull(response)) return
+
+    const json = await response.json();
+
+    if (Array.isArray(json)) {
+      const NullableNode = json.map(e=> {
+        return Node.validation(e) ? e : null
+      })
+    }
+    
+
+    // レンダリングする
+    console.dir(json)
+
+  }
 
   addTagRequest = async (e: any) => {
     if (this.tagNameInput.value == "") return
@@ -249,6 +294,12 @@ export class GlobalMenu {
     const requestButton = CreateInputButton(document, "generate TagNode");
     if (isNull(requestButton)) return undefined;
 
+    const globalInfomationSearchInput = CreateInput(document, "")
+    if (isNull(tagNameInput)) return undefined;
+
+    const globalInformationSearchRequestButton = CreateInputButton(document, "Global Search");
+    if (isNull(requestButton)) return undefined;
+
 
     const i = new GlobalMenu(
       document,
@@ -259,6 +310,8 @@ export class GlobalMenu {
       updateNode,
       tagHashDict,
       scopeManager,
+      globalInfomationSearchInput,
+      globalInformationSearchRequestButton,
     )
     return i
   }
