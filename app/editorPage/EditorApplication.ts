@@ -26,6 +26,7 @@ import { StoredNodes } from "./../client/StoredNodes.ts"
 import { CanvasManager } from "./../client/CanvasManager.ts"
 import { SingleFileUploader, MultiFileUploader, SingleBlobUploader } from "./../editorPage/SingleFileUploader.ts"
 import { failResponse } from "../server/router.ts";
+import { TemporaryQueryNode } from "../models/TemporaryQueryNode.ts";
 
 declare var remoteStorageURL: string;
 
@@ -244,9 +245,26 @@ export class GlobalMenu {
     const json = await response.json();
 
     if (Array.isArray(json)) {
-      const NullableNode = json.map(e=> {
-        return Node.validation(e) ? e : null
-      })
+      const nodes: Node[] = json.
+        map(e=> {
+          return Node.validation(e) ? e : null
+        }).
+        filter((e): e is NonNullable<typeof e> => e != null)
+
+      const queryNode = new TemporaryQueryNode(
+        "",
+        `search query: ${searchText}`,
+        "",
+        "",
+        "",
+        {},
+        ""
+      )
+
+      this.scopeManager?.startTemporaryQueryGraph(
+        queryNode,
+        nodes)
+      this.reloadUI()
     }
     
 

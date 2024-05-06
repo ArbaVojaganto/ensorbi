@@ -118,22 +118,23 @@ export class NodeDetail extends HTMLDivElement {
       }
     }
 
-
     // モーダルウィンドウを開いた時にiframeを生成する
-    if (this.modalWindowElement) {
+    if (this.modalWindowElement ) {
       // モーダルウィンドウ内を掃除
       while (this.modalWindowElement.firstChild) {
         this.modalWindowElement.removeChild(this.modalWindowElement.firstChild);
       }
-      const orgText = await remoteOrgGet(node.hash)
-      const html = org2Html(orgText)
+      if (node.type != "TemporaryQuery") {
+        const orgText = await remoteOrgGet(node.hash)
+        const html = org2Html(orgText)
 
-      // htmlっぽいのものとして解釈できた時だけモーダルウィンドウに追加
-      if ( html != "") {
-        const blob = new Blob([html.contentHTML], { type: 'text/html' })
-        const iframe = document.createElement("iframe")
-        iframe.src = URL.createObjectURL(blob);
-        this.modalWindowElement.appendChild(iframe)
+        // htmlっぽいのものとして解釈できた時だけモーダルウィンドウに追加
+        if ( html != "") {
+          const blob = new Blob([html.contentHTML], { type: 'text/html' })
+          const iframe = document.createElement("iframe")
+          iframe.src = URL.createObjectURL(blob);
+          this.modalWindowElement.appendChild(iframe)
+        }
       }
     }
 
@@ -159,16 +160,18 @@ export class NodeDetail extends HTMLDivElement {
       this.tags = tagsRoot
     }
 
-    // 登録し直し
-    Object.entries(node.vector).forEach( async([target, label]) => {
-      // 非同期に実行されても大丈夫なはずなのでとりあえずawaitなし
-      const node = await this.fetchNode(target)
-      if (node) {
-        const li = document.createElement('li')
-        li.innerText = node.title
-        tagsRoot.appendChild(li)
-      }
-    })
+    if (node.type != "TemporaryQuery") {
+      // 登録し直し
+      Object.entries(node.vector).forEach( async([target, label]) => {
+        // 非同期に実行されても大丈夫なはずなのでとりあえずawaitなし
+        const node = await this.fetchNode(target)
+        if (node) {
+          const li = document.createElement('li')
+          li.innerText = node.title
+          tagsRoot.appendChild(li)
+        }
+      })
+    }
 
     // インスタンスを持たせておく
     this.currentNode = node
@@ -268,6 +271,11 @@ export class EditableNodeDetail extends NodeDetail {
     const orgPathData = orgmodeResourcePath(node.hash)
     this.jsonTextAreaElement.value = JSON.stringify(node)
 
+    // テンポラリクエリノードの場合はネットワークリクエストせずにもどる
+    if (node.type == "TemporaryQuery") {
+      return
+    }
+    
 
     if (this.remoteOpenOrgElement) {
       // 子要素を掃除

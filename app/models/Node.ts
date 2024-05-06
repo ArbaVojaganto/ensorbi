@@ -1,7 +1,7 @@
 
 import { bufferToHash, todayString, isNull } from "./../common/util.ts"
 
-export type NodeType = "BlobMeta" | "TagMeta" | "SymbolNode" | "MarkdownFolderMeta";
+export type NodeType = "BlobMeta" | "TagMeta" | "SymbolNode" | "MarkdownFolderMeta" | "TemporaryQuery";
 export type EdgeDict = {
   [targetNodeUri: string]: NodeEdge
 };

@@ -12,7 +12,7 @@ export type ForceNode = {
   vy: number,
   x: number,
   y: number,
-  links: EdgeDict,
+  vector: EdgeDict,
   referers: EdgeDict,
 }
 export type ForceGarphNodeDict = {
@@ -56,18 +56,19 @@ export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, widt
 
         // つながってるノードから受ける力を計算
         // 参照と被参照を中心ノードからのエッジを一旦連想配列にまとめる
-        const merged = {...target.links, ... target.referers};
+        const merged = {...target.vector, ... target.referers};
 
         Object.entries(merged)
           .forEach( ([targetUri, edgeInfo]) => {
-
             // 自分へのエッジは無視する
             if (target.nodeHash != targetUri) {
 
               const n = nodes[targetUri]
               if (n) {
                 // 対象ノードへのラベルの数だけまわす
-                Object.entries(edgeInfo).forEach( ([hash, weight]) => {
+                Object.entries(edgeInfo).forEach( ([attribute, weight]) => {
+
+                  console.log(`${target.nodeHash}>-${attribute}:${weight}-< ${n.nodeHash}`)
                   const distX = n.x - target.x
                   const distY = n.y - target.y
 
@@ -99,7 +100,7 @@ export const ForceGraphUpdate = (nodes: ForceGarphNodeDict, height: number, widt
           vy: vy,
           x: target.x + vx,
           y: target.y + vy,
-          links: target.links,
+          vector: target.vector,
           referers: target.referers,
         }]
   })
@@ -122,7 +123,7 @@ export const NodeToForceNode = (node: Node) => {
     vy: 0,
     x: 0,
     y: 0,
-    links: node.vector,
+    vector: node.vector,
     referers: node.referers
   }
   return ret
