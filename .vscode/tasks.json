@@ -9,6 +9,11 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "Open localhost",
+      "type": "shell",
+      "command": "start http://localhost:8000",
     }
   ]
 }

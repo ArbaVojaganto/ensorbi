@@ -14,6 +14,7 @@
       //デバッグ実行時のコンパイルチェックが重いときはコメントアウト
       //そのかわりコンパイルチェックは自前でコマンドラインでtscコマンドで実行する
       //"preLaunchTask": "Compile TypeScript",
+      "preLaunchTask": "Open localhost",
       "attachSimplePort": 9229
     },
     {
